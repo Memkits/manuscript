@@ -2,7 +2,7 @@ doctype
 
 html
   head
-    title "Workflow"
+    title Manuscript
     meta (:charset utf-8)
     script(:src dist/vendor.min.js)
     @if (@ dev)

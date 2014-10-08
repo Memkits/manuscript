@@ -31,7 +31,7 @@ gulp.task 'watch', ->
 
   watch glob: 'cirru/*', emitOnGlob: no, (files) ->
     gulp
-    .src 'cirru/index/cirru'
+    .src 'cirru/index.cirru'
     .pipe plumber()
     .pipe html(data: {dev: yes})
     .pipe gulp.dest('./')
