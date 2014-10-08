@@ -1,0 +1,23 @@
+
+.toolbar {
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+    text-align: right;
+}
+
+.toolbar > .button {
+    height: 20px;
+    font-size: 14px;
+    line-height: 20px;
+    background: rgb(157, 177, 255);
+    display: inline-block;
+    border-radius: 10px;
+    padding: 0px 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.toolbar > .button:hover {
+    background: rgb(190, 207, 252);
+}

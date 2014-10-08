@@ -1,0 +1,12 @@
+
+.card {
+    height: 40px;
+    background: rgb(222, 242, 255);
+    cursor: pointer;
+    line-height: 40px;
+    padding: 0 14px;
+}
+
+.card:hover {
+    background: white;
+}

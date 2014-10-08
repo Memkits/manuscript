@@ -14,15 +14,24 @@ store.get = ->
   storage
 
 store.new = ->
-  storage.unshift
+  data =
     id: (new Date).valueOf()
     text: ''
+  storage.unshift data
   @emit()
+  return data
 
 store.update = (data) ->
   for item, index in storage
-    if item.is is data.id
+    if item.id is data.id
       storage.splice index, 1
       break
   storage.unshift data
+  @emit()
+
+store.delete = (id) ->
+  for item, index in storage
+    if item.id is id
+      storage.splice index, 1
+      break
   @emit()

@@ -116,7 +116,7 @@ gulp.task 'cssmin', ->
   cssmin = require 'gulp-cssmin'
   gulp
   .src 'build/css/main.css'
-  .pipe cssmin()
+  .pipe cssmin(root: 'build/css')
   .pipe rename(suffix: '.min')
   .pipe gulp.dest('dist/')
 
@@ -140,7 +140,7 @@ gulp.task 'rsync', ->
     src: '.'
     recursive: true
     args: ['--verbose']
-    dest: "tiye:~/repo/simple-chat"
+    dest: "tiye:~/repo/manuscript"
     deleteAll: yes
     exclude: [
       'bower_components/'

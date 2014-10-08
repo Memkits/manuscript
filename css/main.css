@@ -1,4 +1,19 @@
 
-body {
+@import url('app.css');
 
+body {
+  margin: 0;
+}
+
+body, input, textarea {
+    font-family: Optima;
+}
+
+textarea {
+    border: none;
+    outline: none;
+}
+
+body * {
+  box-shadow: 0 0 1px gray;
 }

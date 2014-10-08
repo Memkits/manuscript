@@ -1,0 +1,21 @@
+
+.note {
+    flex: 1;
+    background: rgb(238, 253, 142);
+    display: flex;
+    flex-direction: column;
+}
+
+.note > textarea {
+    display: flex;
+    flex: 1;
+    font-size: 16px;
+    line-height: 32px;
+    padding: 8px 8px;
+}
+
+.note.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
