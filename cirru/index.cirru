@@ -4,6 +4,7 @@ html
   head
     title Manuscript
     meta (:charset utf-8)
+    link (:rel icon) (:href png/note.png)
     script(:src dist/vendor.min.js)
     @if (@ dev)
       @block
