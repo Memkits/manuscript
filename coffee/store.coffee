@@ -14,19 +14,22 @@ store.get = ->
   storage
 
 store.new = ->
+  time = (new Date).valueOf()
   data =
-    id: (new Date).valueOf()
+    id: time
+    updated: time
     text: ''
-  storage.unshift data
+  storage.push data
   @emit()
   return data
 
 store.update = (data) ->
   for item, index in storage
     if item.id is data.id
-      storage.splice index, 1
+      item.text = data.text
+      item.updated = (new Date).valueOf()
+      console.log 'updated', item.updated
       break
-  storage.unshift data
   @emit()
 
 store.delete = (id) ->

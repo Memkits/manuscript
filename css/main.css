@@ -16,4 +16,5 @@ textarea {
 
 body * {
   box-shadow: 0 0 1px gray;
+  box-sizing: border-box;
 }

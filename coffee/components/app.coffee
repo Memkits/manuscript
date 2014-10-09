@@ -21,11 +21,19 @@ module.exports = React.createClass
     @setState focused: id
 
   render: ->
-    cards = @props.data.map (item) =>
+    order = @props.data
+    .sort (a, b) => b.updated - a.updated
+    .map (item) => item.id
+
+    cards = @props.data
+    .sort (a, b) => a.id - b.id
+    .map (item) =>
       Card
         data: item
         key: item.id
+        order: order
         onSelect: @selectCard
+        focused: @state.focused
 
     focusedCards = @props.data.filter (item) =>
       item.id is @state.focused

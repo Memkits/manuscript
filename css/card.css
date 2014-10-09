@@ -1,12 +1,26 @@
 
+.cards {
+    position: relative;
+}
+
 .card {
     height: 40px;
-    background: rgb(222, 242, 255);
+    background: rgb(142, 135, 135);
     cursor: pointer;
     line-height: 40px;
     padding: 0 14px;
+    position: absolute;
+    width: 100%;
+    transition-duration: 400ms;
+    color: white;
+}
+
+.card.focused .capital {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: capitalize;
 }
 
 .card:hover {
-    background: white;
+    background: rgb(165, 161, 161);
 }

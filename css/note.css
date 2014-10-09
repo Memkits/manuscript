@@ -1,7 +1,7 @@
 
 .note {
     flex: 1;
-    background: rgb(238, 253, 142);
+    background: rgb(229, 240, 252);
     display: flex;
     flex-direction: column;
 }
