@@ -13,6 +13,9 @@
     width: 100%;
     transition-duration: 400ms;
     color: white;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .card.focused .capital {

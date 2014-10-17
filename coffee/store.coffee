@@ -28,7 +28,13 @@ store.update = (data) ->
     if item.id is data.id
       item.text = data.text
       item.updated = (new Date).valueOf()
-      console.log 'updated', item.updated
+      break
+  @emit()
+
+store.touch = (id) ->
+  for item, index in storage
+    if item.id is id
+      item.updated = (new Date).valueOf()
       break
   @emit()
 

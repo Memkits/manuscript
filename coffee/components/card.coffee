@@ -2,11 +2,16 @@
 React = require 'react'
 $ = React.DOM
 
+store = require '../store'
+
 module.exports = React.createClass
   displayName: 'Card'
 
   selectCard: ->
     @props.onSelect @props.data.id
+
+  touchCard: ->
+    store.touch @props.data.id
 
   render: ->
     index = @props.order.indexOf @props.data.id
@@ -21,6 +26,7 @@ module.exports = React.createClass
         else
           'card'
       onClick: @selectCard
+      onDoubleClick: @touchCard
       $.span className: 'capital', title[0]
       if title.trim().length
         $.span {}, "#{title[1..]}"
