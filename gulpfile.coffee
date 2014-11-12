@@ -6,7 +6,7 @@ sequence = require 'run-sequence'
 project = 'jiyinyiyong/simple-chat/index.html'
 dev = yes
 libraries = [
-  'react'
+  'react/addons'
 ]
 
 gulp.task 'folder', ->

@@ -1,10 +1,10 @@
 
-React = require 'react'
+React = require 'react/addons'
 $ = React.DOM
 
 store = require '../store'
 
-module.exports = React.createClass
+module.exports = React.createFactory React.createClass
   displayName: 'Note'
 
   componentDidMount: ->

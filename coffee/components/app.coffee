@@ -1,13 +1,15 @@
 
-React = require 'react'
+React = require 'react/addons'
 $ = React.DOM
+
+ReactCSSTransitionGroup = React.createFactory React.addons.CSSTransitionGroup
 
 store = require '../store'
 
 Card = require './card'
 Note = require './note'
 
-module.exports = React.createClass
+module.exports = React.createFactory React.createClass
   displayName: 'App'
 
   getInitialState: ->
@@ -49,7 +51,8 @@ module.exports = React.createClass
           className: 'cards',
           style:
             height: '100%'
-          cards
+          ReactCSSTransitionGroup transitionName: 'slide',
+            cards
       if focusedCards.length
         Note data: focusedCards[0]
       else

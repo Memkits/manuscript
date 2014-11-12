@@ -1,13 +1,13 @@
 
 store = require './store'
 
-React = require 'react'
+React = require 'react/addons'
 $ = React.DOM
 
 App = require './components/app'
 
 store.addChangeListener ->
   app = App data: store.get()
-  React.renderComponent app, document.body
+  React.render app, document.body
 
 store.emit()
