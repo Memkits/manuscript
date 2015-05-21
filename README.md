@@ -4,6 +4,8 @@ Manuscript
 
 Demo: http://repo.tiye.me/manuscript/
 
+Logo: ![](./images/manuscript.png)
+
 ### Usage
 
 This is a tiny note tools for such senarios:

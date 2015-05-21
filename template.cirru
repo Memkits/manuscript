@@ -11,5 +11,5 @@ var
         title null :Manuscript
         meta $ object (:charset :utf-8)
         script $ object (:src data.main) (:defer true)
-        link $ object (:rel :icon) (:href :png/note.png)
+        link $ object (:rel :icon) (:href :images/manuscript.png)
       body null
