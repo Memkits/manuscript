@@ -18,11 +18,14 @@ var $ _store $ immutable.List
 try
   do
     var rawData $ localStorage.getItem :manuscript
-    var allData $ JSON.parse rawData
+    var allData $ JSON.parse $ or rawData :[]
     = _store $ immutable.fromJS allData
   err
 
-if (is _store.size 0) $ do
+var emptyNotes $ _store.filter $ \ (note)
+  return $ is (note.get :text) :
+
+if (is emptyNotes.size 0) $ do
   = _store $ _store.push (createNote)
 
 = module.exports store

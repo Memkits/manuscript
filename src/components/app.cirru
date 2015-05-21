@@ -3,6 +3,8 @@ var
   React $ require :react
   actions $ require :../actions
   cx $ require :classnames
+  Transition $ React.createFactory
+    require :timeout-transition-group
 
 var div $ React.createFactory :div
 var textarea $ React.createFactory :textarea
@@ -101,7 +103,12 @@ var T React.PropTypes
       object (:className :app-root)
       div
         object (:className :sidebar)
-        this.renderEntries
+        Transition
+          object
+            :enterTimeout 400
+            :leaveTimeout 250
+            :transitionName :slide
+          this.renderEntries
       textarea
         object (:className :text)
           :ref :text
