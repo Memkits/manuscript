@@ -42,23 +42,51 @@ var T React.PropTypes
         :cursor $ note.get :id
       \\ ()
         this.focusAtText
+  :onEntryDoubleClick $ \ (note)
+    this.onEntryClick note
+    actions.touch $ note.get :id
 
   :renderEntries $ \ ()
-    return $ this.props.notes.map $ \\ (item index)
+    var notes $ this.props.notes.sort $ \ (a b)
+      if (is (a.get :text) :) $ do
+        return -1
+      if (is (b.get :text) :) $ do
+        return 1
+      if (< (a.get :time) (b.get :time)) $ do
+        return 1
+      if (> (a.get :time) (b.get :time)) $ do
+        return -1
+      return 0
+
+    = notes $ notes.map $ \\ (item index)
       var
         className $ cx :entry
           object
             :is-active (is (item.get :id) this.state.cursor)
         style $ object
-          :top $ * 40 index
+          :top $ + 10 $ * 44 index
+        content $ item.get :text
+        firstLine $ . (content.split ":\n") 0
         onClick $ \\ ()
           this.onEntryClick item
+        onDoubleClick $ \\ ()
+          this.onEntryDoubleClick item
+
+      var display $ cond
+        > content.length 0
+        or firstLine :/hidden/
+        , :
+
       return $ div
         object (:className :entry)
           :key (item.get :id)
           :style style
           :onClick onClick
-        item.get :text
+          :onDoubleClick onDoubleClick
+        , display
+
+    return $ notes.sortBy $ \ (note)
+      return note.key
 
   :render $ \ ()
     var selected $ this.props.notes.find $ \\ (note)

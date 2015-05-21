@@ -8,3 +8,8 @@ var
     :id id
     :text text
 
+= exports.touch $ \ (id text)
+  dispatcher.dispatch $ object
+    :type :touch
+    :id id
+

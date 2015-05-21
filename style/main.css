@@ -49,11 +49,11 @@ textarea {
     padding: 0 14px;
     position: absolute;
     width: 100%;
-    transition: 400ms;
     color: white;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    transition-duration: 400ms;
 }
 
 .entry.is-active,
