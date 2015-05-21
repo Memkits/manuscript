@@ -12,4 +12,5 @@ var
         meta $ object (:charset :utf-8)
         script $ object (:src data.main) (:defer true)
         link $ object (:rel :icon) (:href :images/manuscript.png)
+        link $ object (:rel :stylesheet) (:href :style/main.css)
       body null

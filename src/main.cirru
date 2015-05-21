@@ -4,4 +4,9 @@ var
   store $ require :./store
   App $ React.createFactory $ require :./components/app
 
-React.render (App) document.body
+var render $ \ ()
+  var notes $ store.get
+  React.render (App (object (:notes notes))) document.body
+
+store.addChangeListener render
+render
