@@ -5,7 +5,7 @@
 
 body {
     margin: 0;
-    font-family: Source Han Sans CN,Times,serif;
+    font-family: Myriad, PingFang SC, Times, serif;
     font-size: 16px;
     line-height: 1.6em;
 }
@@ -23,7 +23,7 @@ textarea {
     padding: 0.5em;
     font-size: 16px;
     line-height: 1.6em;
-    font-family: Source Han Sans CN,Times,serif;
+    font-family: Myriad, PingFang SC,Times,serif;
 }
 
 /* module css */

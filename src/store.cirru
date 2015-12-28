@@ -45,7 +45,7 @@ assign store $ object
 
 = store.dispatchToken $ dispatcher.register $ \ (action)
   -- console.info action
-  switch action.type
+  case action.type
     :update
       = _store $ _store.map $ \ (note)
         var now $ new Date
