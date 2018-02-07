@@ -1,8 +1,5 @@
 
-bower_components/
-node_modules/
-
-build/
-dist/
-
-index.html
+/target/
+/dist
+/node_modules
+.cpcache/
