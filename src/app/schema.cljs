@@ -1,6 +1,8 @@
 
 (ns app.schema )
 
+(def config {:storage-key "manuscript"})
+
 (def draft {:id nil, :text "", :touch-id nil})
 
 (def store

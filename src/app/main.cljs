@@ -7,10 +7,14 @@
             [reel.util :refer [id!]]
             [reel.core :refer [reel-updater refresh-reel listen-devtools!]]
             [reel.schema :as reel-schema]
-            ["shortid" :as shortid]))
+            ["shortid" :as shortid]
+            [cljs.reader :refer [read-string]]))
 
 (defonce *reel
-  (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
+  (atom
+   (let [raw (.getItem js/localStorage (:storage-key schema/config))
+         store (if (some? raw) (read-string raw) schema/store)]
+     (-> reel-schema/reel (assoc :base store) (assoc :store store)))))
 
 (defn dispatch! [op op-data]
   (println "op" op op-data)
@@ -29,6 +33,10 @@
   (render-app! render!)
   (add-watch *reel :changes (fn [] (render-app! render!)))
   (listen-devtools! "a" dispatch!)
+  (.addEventListener
+   js/window
+   "beforeunload"
+   (fn [] (.setItem js/localStorage (:storage-key schema/config) (pr-str (:store @*reel)))))
   (println "App started."))
 
 (defn reload! []

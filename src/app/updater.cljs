@@ -23,7 +23,6 @@
                      (assoc drafts op-id (merge schema/draft {:id op-id}))
                    :else
                      (let [empty-ids (disj (set (map :id empty-drafts)) pointer)]
-                       (println "empty ids:" empty-ids empty-drafts)
                        (apply dissoc drafts empty-ids)))))))
       :pointer (assoc store :pointer op-data)
       (do (println "Unknown op:" op) store))))
