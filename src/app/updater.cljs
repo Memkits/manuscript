@@ -25,4 +25,5 @@
                      (let [empty-ids (disj (set (map :id empty-drafts)) pointer)]
                        (apply dissoc drafts empty-ids)))))))
       :pointer (assoc store :pointer op-data)
+      :load op-data
       (do (println "Unknown op:" op) store))))

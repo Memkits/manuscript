@@ -54,4 +54,4 @@
       :placeholder "Your note...",
       :on-input (action-> :text (:value %e))})
     (cursor-> :reel comp-reel states reel {})
-    (comp-inspect "drafts" drafts {:position :absolute, :bottom 0}))))
+    (comment comp-inspect "drafts" drafts {:position :absolute, :bottom 0}))))

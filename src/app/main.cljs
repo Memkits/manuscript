@@ -11,10 +11,7 @@
             [cljs.reader :refer [read-string]]))
 
 (defonce *reel
-  (atom
-   (let [raw (.getItem js/localStorage (:storage-key schema/config))
-         store (if (some? raw) (read-string raw) schema/store)]
-     (-> reel-schema/reel (assoc :base store) (assoc :store store)))))
+  (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
 
 (defn dispatch! [op op-data]
   (println "op" op op-data)
@@ -37,6 +34,8 @@
    js/window
    "beforeunload"
    (fn [] (.setItem js/localStorage (:storage-key schema/config) (pr-str (:store @*reel)))))
+  (let [raw (.getItem js/localStorage (:storage-key schema/config))]
+    (if (some? raw) (do (println "Found Storage:" raw) (dispatch! :load (read-string raw)))))
   (println "App started."))
 
 (defn reload! []

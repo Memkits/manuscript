@@ -27,7 +27,7 @@
   (let [reel (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))
         html-content (make-string (comp-container reel))
         assets (read-string (slurp "dist/assets.edn"))
-        cdn (if preview? "" "http://cdn.tiye.me/calcit-workflow/")
+        cdn (if preview? "" "http://cdn.tiye.me/manuscript/")
         prefix-cdn (fn [x] (str cdn x))]
     (make-page
      html-content
