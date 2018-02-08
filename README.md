@@ -2,7 +2,7 @@
 Manuscript
 ------
 
-Demo: http://repo.tiye.me/manuscript/
+Demo: http://repo.memkits.org/manuscript/
 
 Logo: ![](./images/manuscript.png)
 
