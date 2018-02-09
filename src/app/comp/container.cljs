@@ -13,6 +13,29 @@
             [respo.comp.inspect :refer [comp-inspect]]))
 
 (defcomp
+ comp-title
+ (draft idx pointer)
+ (div
+  {:style (merge
+           {:padding "0 8px",
+            :line-height "32px",
+            :white-space :nowrap,
+            :overflow :hidden,
+            :text-overflow :ellipsis,
+            :cursor :pointer,
+            :top (+ 8 (* idx 32)),
+            :transition-duration "300ms",
+            :transition-property "top",
+            :position :absolute,
+            :width "100%"}
+           (if (= pointer (:id draft)) {:background-color (hsl 0 0 100 0.2)})),
+   :on-click (action-> :pointer (:id draft))}
+  (let [text (:text draft)]
+    (if (string/blank? text)
+      (<> "Empty" {:color (hsl 0 0 100 0.3)})
+      (<> (first (string/split-lines text)) {:color :white})))))
+
+(defcomp
  comp-container
  (reel)
  (let [store (:store reel)
@@ -29,28 +52,7 @@
      (->> drafts
           vals
           (sort-by (fn [draft] (- 0 (:touch-id draft))))
-          (map-indexed
-           (fn [idx draft]
-             [(:id draft)
-              (div
-               {:style (merge
-                        {:padding "0 8px",
-                         :line-height "32px",
-                         :white-space :nowrap,
-                         :overflow :hidden,
-                         :text-overflow :ellipsis,
-                         :cursor :pointer,
-                         :top (+ 8 (* idx 32)),
-                         :transition-duration "300ms",
-                         :transition-property "top",
-                         :position :absolute,
-                         :width "100%"}
-                        (if (= pointer (:id draft)) {:background-color (hsl 0 0 100 0.2)})),
-                :on-click (action-> :pointer (:id draft))}
-               (let [text (:text draft)]
-                 (if (string/blank? text)
-                   (<> "Empty" {:color (hsl 0 0 100 0.5)})
-                   (<> (first (string/split-lines text)) {:color :white}))))]))
+          (map-indexed (fn [idx draft] [(:id draft) (comp-title draft idx pointer)]))
           (sort-by first)))
     (textarea
      {:value (:text (get drafts pointer)),
