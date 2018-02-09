@@ -22,24 +22,36 @@
    (div
     {:style (merge ui/global ui/fullscreen ui/row)}
     (list->
-     {:style {:width 240, :background-color (hsl 170 35 24)}}
+     {:style {:width 240,
+              :background-color (hsl 170 35 24),
+              :position :relative,
+              :color :white}}
      (->> drafts
-          (map-val
-           (fn [draft]
-             (div
-              {:style (merge
-                       {:padding "0 8px",
-                        :line-height "2.4em",
-                        :white-space :nowrap,
-                        :overflow :hidden,
-                        :text-overflow :ellipsis,
-                        :cursor :pointer}
-                       (if (= pointer (:id draft)) {:background-color (hsl 0 0 100 0.2)})),
-               :on-click (action-> :pointer (:id draft))}
-              (let [text (:text draft)]
-                (if (string/blank? text)
-                  (<> "Empty" {:color (hsl 0 0 100 0.5)})
-                  (<> (first (string/split-lines text)) {:color :white}))))))))
+          vals
+          (sort-by (fn [draft] (- 0 (:touch-id draft))))
+          (map-indexed
+           (fn [idx draft]
+             [(:id draft)
+              (div
+               {:style (merge
+                        {:padding "0 8px",
+                         :line-height "32px",
+                         :white-space :nowrap,
+                         :overflow :hidden,
+                         :text-overflow :ellipsis,
+                         :cursor :pointer,
+                         :top (+ 8 (* idx 32)),
+                         :transition-duration "300ms",
+                         :transition-property "top",
+                         :position :absolute,
+                         :width "100%"}
+                        (if (= pointer (:id draft)) {:background-color (hsl 0 0 100 0.2)})),
+                :on-click (action-> :pointer (:id draft))}
+               (let [text (:text draft)]
+                 (if (string/blank? text)
+                   (<> "Empty" {:color (hsl 0 0 100 0.5)})
+                   (<> (first (string/split-lines text)) {:color :white}))))]))
+          (sort-by first)))
     (textarea
      {:value (:text (get drafts pointer)),
       :style (merge

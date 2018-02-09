@@ -4,19 +4,17 @@
             [app.comp.container :refer [comp-container]]
             [app.updater :refer [updater]]
             [app.schema :as schema]
-            [reel.util :refer [id!]]
-            [reel.core :refer [reel-updater refresh-reel listen-devtools!]]
+            [reel.util :refer [listen-devtools!]]
+            [reel.core :refer [reel-updater refresh-reel]]
             [reel.schema :as reel-schema]
-            ["shortid" :as shortid]
             [cljs.reader :refer [read-string]]))
 
 (defonce *reel
   (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
 
 (defn dispatch! [op op-data]
-  (println "op" op op-data)
-  (let [op-id (.generate shortid), next-reel (reel-updater updater @*reel op op-data op-id)]
-    (reset! *reel next-reel)))
+  (println "Dispatch!" op)
+  (let [next-reel (reel-updater updater @*reel op op-data)] (reset! *reel next-reel)))
 
 (def mount-target (.querySelector js/document ".app"))
 
@@ -35,7 +33,8 @@
    "beforeunload"
    (fn [] (.setItem js/localStorage (:storage-key schema/config) (pr-str (:store @*reel)))))
   (let [raw (.getItem js/localStorage (:storage-key schema/config))]
-    (if (some? raw) (do (println "Found Storage:" raw) (dispatch! :load (read-string raw)))))
+    (if (some? raw)
+      (do (println "Found Storage:" raw) (dispatch! :hydrate-storage (read-string raw)))))
   (println "App started."))
 
 (defn reload! []
