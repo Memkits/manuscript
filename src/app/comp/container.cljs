@@ -10,7 +10,8 @@
             [reel.comp.reel :refer [comp-reel]]
             [respo.util.list :refer [map-val]]
             [clojure.string :as string]
-            [respo.comp.inspect :refer [comp-inspect]]))
+            [respo.comp.inspect :refer [comp-inspect]]
+            [app.util :refer [focus-text!]]))
 
 (defcomp
  comp-title
@@ -29,7 +30,7 @@
             :position :absolute,
             :width "100%"}
            (if (= pointer (:id draft)) {:background-color (hsl 0 0 100 0.2)})),
-   :on-click (action-> :pointer (:id draft))}
+   :on-click (fn [e d! m!] (d! :pointer (:id draft)) (focus-text!))}
   (let [text (:text draft)]
     (if (string/blank? text)
       (<> "Empty" {:color (hsl 0 0 100 0.3)})

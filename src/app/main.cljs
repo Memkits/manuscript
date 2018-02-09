@@ -7,7 +7,8 @@
             [reel.util :refer [listen-devtools!]]
             [reel.core :refer [reel-updater refresh-reel]]
             [reel.schema :as reel-schema]
-            [cljs.reader :refer [read-string]]))
+            [cljs.reader :refer [read-string]]
+            [app.util :refer [focus-text!]]))
 
 (defonce *reel
   (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
@@ -35,6 +36,7 @@
   (let [raw (.getItem js/localStorage (:storage-key schema/config))]
     (if (some? raw)
       (do (println "Found Storage:" raw) (dispatch! :hydrate-storage (read-string raw)))))
+  (focus-text!)
   (println "App started."))
 
 (defn reload! []
