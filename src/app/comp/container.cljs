@@ -64,7 +64,8 @@
                :font-size 16,
                :outline :none,
                :background-color :white,
-               :resize :none}),
+               :resize :none,
+               :padding-bottom 400}),
       :class-name "text",
       :placeholder "Your note...",
       :on-input (action-> :text (:value %e))})

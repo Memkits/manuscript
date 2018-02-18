@@ -486,6 +486,13 @@
                        "j" {:type :leaf, :by "root", :at 1518105006022, :text ":none", :id "r1ErhWecIM"}
                       }
                      }
+                     "yT" {
+                      :type :expr, :by "root", :at 1518921647585, :id "ByOhvwUwG"
+                      :data {
+                       "T" {:type :leaf, :by "root", :at 1518921651200, :text ":padding-bottom", :id "ByOhvwUwGleaf"}
+                       "j" {:type :leaf, :by "root", :at 1518921652046, :text "400", :id "HyronwvLPM"}
+                      }
+                     }
                     }
                    }
                   }
@@ -2614,4 +2621,8 @@
  }
  :saved-files {}
  :configs {:storage-key "calcit.edn", :extension ".cljs", :output "src", :port 6001}
+ :repl {
+  :alive? false
+  :logs {}
+ }
 }
