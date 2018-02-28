@@ -33,7 +33,7 @@
    :on-click (fn [e d! m!] (d! :pointer (:id draft)) (focus-text!))}
   (let [text (:text draft)]
     (if (string/blank? text)
-      (<> "Empty" {:color (hsl 0 0 100 0.3)})
+      (<> "New..." {:color (hsl 0 0 100 0.3)})
       (<> (first (string/split-lines text)) {:color :white})))))
 
 (defcomp
@@ -67,7 +67,7 @@
                :resize :none,
                :padding-bottom 400}),
       :class-name "text",
-      :placeholder "Your note...",
+      :placeholder "New...",
       :on-input (action-> :text (:value %e))})
     (cursor-> :reel comp-reel states reel {})
     (comment comp-inspect "drafts" drafts {:position :absolute, :bottom 0}))))

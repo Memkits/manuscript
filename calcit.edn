@@ -510,7 +510,7 @@
                 :type :expr, :by "root", :at 1518104887581, :id "BkgrWxcLG"
                 :data {
                  "T" {:type :leaf, :by "root", :at 1518104898171, :text ":placeholder", :id "BkgrWxcLGleaf"}
-                 "j" {:type :leaf, :by "root", :at 1518104905813, :text "|Your note...", :id "S1BOS-gcLz"}
+                 "j" {:type :leaf, :by "root", :at 1519805159794, :text "|New...", :id "S1BOS-gcLz"}
                 }
                }
                "v" {
@@ -839,7 +839,7 @@
               :type :expr, :by "root", :at 1518191265876, :id "BJoN5sMSo8f"
               :data {
                "T" {:type :leaf, :by "root", :at 1518191265876, :text "<>", :id "By2NcizHs8z"}
-               "j" {:type :leaf, :by "root", :at 1518191265876, :text "|Empty", :id "HkTN5oMrsUM"}
+               "j" {:type :leaf, :by "root", :at 1519805148500, :text "|New...", :id "HkTN5oMrsUM"}
                "r" {
                 :type :expr, :by "root", :at 1518191265876, :id "BJCN5ofSs8G"
                 :data {
@@ -1671,7 +1671,6 @@
                 :type :expr, :time 1499755354983, :id "H1l8go_FqTHZ"
                 :data {
                  "T" {:type :leaf, :author "root", :time 1499755354983, :text "[]", :id "SJ-Lgj_t5aS-"}
-                 "r" {:type :leaf, :author "root", :time 1499755354983, :text "|/lib.js", :id "BJ7Ils_Y5arb", :at 1515039511181, :by "root"}
                  "v" {:type :leaf, :author "root", :time 1499755354983, :text "|/main.js", :id "HJNUxo_tcpSb", :at 1515039513665, :by "root"}
                 }
                }

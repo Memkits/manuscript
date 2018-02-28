@@ -6,8 +6,6 @@ Manuscript
 
 Demo: http://repo.memkits.org/manuscript/
 
-Logo: ![](./images/manuscript.png)
-
 ### Workflow
 
 https://github.com/mvc-works/calcit-workflow
