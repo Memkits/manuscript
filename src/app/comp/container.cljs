@@ -24,7 +24,7 @@
             :overflow :hidden,
             :text-overflow :ellipsis,
             :cursor :pointer,
-            :top (+ 8 (* idx 32)),
+            :top (+ 16 (* idx 32)),
             :transition-duration "300ms",
             :transition-property "top",
             :position :absolute,
@@ -33,8 +33,11 @@
    :on-click (fn [e d! m!] (d! :pointer (:id draft)) (focus-text!))}
   (let [text (:text draft)]
     (if (string/blank? text)
-      (<> "New..." {:color (hsl 0 0 100 0.3)})
-      (<> (first (string/split-lines text)) {:color :white})))))
+      (<> "new..." {:color (hsl 0 0 100 0.3)})
+      (let [title (first (string/split-lines text))]
+        (if (string/blank? title)
+          (<> "<private>" {:color (hsl 0 0 80 0.5), :font-style :italic})
+          (<> title {:color :white})))))))
 
 (defcomp
  comp-container
@@ -52,7 +55,10 @@
               :color :white}}
      (->> drafts
           vals
-          (sort-by (fn [draft] (- 0 (:touch-id draft))))
+          (sort-by
+           (fn [draft]
+             (unchecked-negate
+              (if (string/blank? (:text draft)) js/Number.MAX_VALUE (:touch-id draft)))))
           (map-indexed (fn [idx draft] [(:id draft) (comp-title draft idx pointer)]))
           (sort-by first)))
     (textarea
@@ -61,13 +67,15 @@
               ui/flex
               ui/textarea
               {:border :none,
+               :line-height "1.6em",
                :font-size 16,
                :outline :none,
                :background-color :white,
                :resize :none,
+               :padding "16px 8px",
                :padding-bottom 400}),
       :class-name "text",
-      :placeholder "New...",
+      :placeholder "new...",
       :on-input (action-> :text (:value %e))})
     (cursor-> :reel comp-reel states reel {})
     (comment comp-inspect "drafts" drafts {:position :absolute, :bottom 0}))))
