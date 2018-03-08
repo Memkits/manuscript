@@ -27,4 +27,5 @@
                        (apply dissoc drafts empty-ids)))))))
       :pointer (assoc store :pointer op-data)
       :hydrate-storage op-data
+      :mono (update store :mono? not)
       (do (println "Unknown op:" op) store))))

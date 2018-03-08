@@ -14,6 +14,21 @@
             [app.util :refer [focus-text!]]))
 
 (defcomp
+ comp-mono
+ (store pointer)
+ (let [drafts (:drafts store)]
+   (comment
+    span
+    {:style {:font-family ui/font-code,
+             :position :absolute,
+             :right 8,
+             :top 8,
+             :color (if (get-in drafts [pointer :mono?]) (hsl 0 0 40) (hsl 0 0 90)),
+             :cursor :pointer},
+     :on-click (action-> :mono nil)}
+    (<> "Mono"))))
+
+(defcomp
  comp-title
  (draft idx pointer)
  (div
@@ -77,5 +92,6 @@
       :class-name "text",
       :placeholder "new...",
       :on-input (action-> :text (:value %e))})
+    (comment comp-mono store pointer)
     (cursor-> :reel comp-reel states reel {})
-    (comment comp-inspect "drafts" drafts {:position :absolute, :bottom 0}))))
+    (comment comp-inspect "store" store {:position :absolute, :bottom 0}))))
