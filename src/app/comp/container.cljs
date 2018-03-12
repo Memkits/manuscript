@@ -15,18 +15,16 @@
 
 (defcomp
  comp-mono
- (store pointer)
- (let [drafts (:drafts store)]
-   (comment
-    span
-    {:style {:font-family ui/font-code,
-             :position :absolute,
-             :right 8,
-             :top 8,
-             :color (if (get-in drafts [pointer :mono?]) (hsl 0 0 40) (hsl 0 0 90)),
-             :cursor :pointer},
-     :on-click (action-> :mono nil)}
-    (<> "Mono"))))
+ (mono?)
+ (span
+  {:style {:font-family ui/font-code,
+           :position :absolute,
+           :right 8,
+           :bottom 8,
+           :color (if mono? (hsl 0 0 40) (hsl 0 0 90)),
+           :cursor :pointer},
+   :on-click (action-> :mono nil)}
+  (<> "Mono")))
 
 (defcomp
  comp-title
@@ -60,7 +58,8 @@
  (let [store (:store reel)
        states (:states store)
        drafts (:drafts store)
-       pointer (:pointer store)]
+       pointer (:pointer store)
+       mono? (get-in store [:drafts pointer :mono?])]
    (div
     {:style (merge ui/global ui/fullscreen ui/row)}
     (list->
@@ -78,6 +77,7 @@
           (sort-by first)))
     (textarea
      {:value (:text (get drafts pointer)),
+      :spellcheck (not mono?),
       :style (merge
               ui/flex
               ui/textarea
@@ -88,10 +88,15 @@
                :background-color :white,
                :resize :none,
                :padding "16px 8px",
-               :padding-bottom 400}),
+               :padding-bottom 400}
+              (if mono? {:font-family ui/font-code, :font-size 14})),
       :class-name "text",
       :placeholder "new...",
       :on-input (action-> :text (:value %e))})
-    (comment comp-mono store pointer)
+    (comp-mono mono?)
     (cursor-> :reel comp-reel states reel {})
-    (comment comp-inspect "store" store {:position :absolute, :bottom 0}))))
+    (comment
+     comp-inspect
+     "draft"
+     (get-in store [:drafts pointer])
+     {:position :absolute, :bottom 0}))))
