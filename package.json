@@ -3,12 +3,7 @@
   "version": "0.1.0",
   "description": "A Notebook",
   "main": "index.js",
-  "scripts": {
-    "watch": "shadow-cljs watch browser",
-    "serve": "http-server dist -s",
-    "repl": "rlwrap shadow-cljs clj-repl",
-    "build": "shadow-cljs clj-run build.main/build"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:Memkits/manuscript.git"
@@ -16,10 +11,11 @@
   "author": "jiyinyiyong",
   "license": "MIT",
   "devDependencies": {
-    "http-server": "^0.11.1",
-    "shadow-cljs": "^2.2.6"
+    "bottom-tip": "^0.1.2",
+    "vite": "^2.4.4"
   },
   "dependencies": {
+    "@calcit/procs": "^0.4.16",
     "shortid": "^2.2.8"
   }
 }
