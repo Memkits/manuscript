@@ -3,6 +3,7 @@
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
     :version |0.0.1
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -171,9 +172,8 @@
         |render-app! $ quote
           defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
         |persist-storage! $ quote
-          defn persist-storage! () $ ;nil
-            .!setItem js/localStorage (:storage-key config/site)
-              format-cirru-edn $ :store @*reel
+          defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
+            format-cirru-edn $ :store @*reel
         |mount-target $ quote
           def mount-target $ js/document.querySelector |.app
         |*reel $ quote

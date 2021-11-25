@@ -1,9 +1,8 @@
 
 {}
-  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:storage-key |calcit.cirru) (:version |0.0.1)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
-    :init-fn |app.main/main!
-    :extension |.cljs
+  :users $ {}
+    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+    |rJG4IHzWf $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |rJG4IHzWf) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
   :ir $ {} (:package |app)
     :files $ {}
       |app.comp.container $ {}
@@ -2191,30 +2190,24 @@
                 :by |rJG4IHzWf
               |v $ {}
                 :data $ {}
-                  |D $ {} (:text |;nil) (:type :leaf) (:at 1628936769448) (:by |rJG4IHzWf)
-                  |T $ {}
+                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |.!setItem)
+                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |js/localStorage)
+                  |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1628935167182)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |.!setItem)
-                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |js/localStorage)
-                      |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1628935167182)
+                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |:storage-key)
+                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |config/site)
+                  |v $ {}
+                    :data $ {}
+                      |T $ {} (:text |format-cirru-edn) (:type :leaf) (:at 1628935167182) (:by |rJG4IHzWf)
+                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1628935167182)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |:storage-key)
-                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |config/site)
-                      |v $ {}
-                        :data $ {}
-                          |T $ {} (:text |format-cirru-edn) (:type :leaf) (:at 1628935167182) (:by |rJG4IHzWf)
-                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1628935167182)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |:store)
-                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |@*reel)
-                        :type :expr
-                        :at 1628935167182
-                        :by |rJG4IHzWf
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |:store)
+                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1628935167182) (:text |@*reel)
                     :type :expr
                     :at 1628935167182
                     :by |rJG4IHzWf
                 :type :expr
-                :at 1628936765119
+                :at 1628935167182
                 :by |rJG4IHzWf
             :type :expr
             :at 1628935167182
@@ -2849,6 +2842,8 @@
         :proc $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1628935470632)
           :data $ {}
         :configs $ {}
-  :users $ {}
-    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
-    |rJG4IHzWf $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |rJG4IHzWf) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:storage-key |calcit.cirru) (:version |0.0.1)
+    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+    :init-fn |app.main/main!
+    :extension |.cljs
+  :entries $ {}
