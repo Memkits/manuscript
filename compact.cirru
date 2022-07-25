@@ -1,22 +1,10 @@
 
 {} (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
+  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
-    :version |0.0.1
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
-      :ns $ quote
-        ns app.comp.container $ :require
-          [] respo-ui.core :refer $ [] hsl
-          [] respo-ui.core :as ui
-          [] respo.core :refer $ [] defcomp >> list-> <> div button textarea span
-          [] respo.comp.space :refer $ [] =<
-          [] reel.comp.reel :refer $ [] comp-reel
-          [] respo.util.list :refer $ [] map-val
-          [] clojure.string :as string
-          [] respo.comp.inspect :refer $ [] comp-inspect
-          [] app.util :refer $ [] focus-text!
       :defs $ {}
         |comp-container $ quote
           defcomp comp-container (reel)
@@ -101,9 +89,84 @@
                         :color $ hsl 0 0 80 0.5
                         :font-style :italic
                       <> title $ {} (:color :white)
-    |app.schema $ {}
-      :ns $ quote (ns app.schema)
+      :ns $ quote
+        ns app.comp.container $ :require
+          [] respo-ui.core :refer $ [] hsl
+          [] respo-ui.core :as ui
+          [] respo.core :refer $ [] defcomp >> list-> <> div button textarea span
+          [] respo.comp.space :refer $ [] =<
+          [] reel.comp.reel :refer $ [] comp-reel
+          [] respo.util.list :refer $ [] map-val
+          [] clojure.string :as string
+          [] respo.comp.inspect :refer $ [] comp-inspect
+          [] app.util :refer $ [] focus-text!
+    |app.config $ {}
       :defs $ {}
+        |dev? $ quote
+          def dev? $ = "\"dev" (get-env "\"mode" "\"release")
+        |site $ quote
+          def site $ {} (:storage-key "\"manuscript")
+      :ns $ quote (ns app.config)
+    |app.main $ {}
+      :defs $ {}
+        |*reel $ quote
+          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+        |dispatch! $ quote
+          defn dispatch! (op op-data)
+            when
+              and config/dev? $ not= op :states
+              println "\"Dispatch:" op
+            reset! *reel $ reel-updater updater @*reel op op-data
+        |main! $ quote
+          defn main! ()
+            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+            render-app!
+            add-watch *reel :changes $ fn (reel prev) (render-app!)
+            listen-devtools! |k dispatch!
+            .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
+            repeat! 60 persist-storage!
+            let
+                raw $ .!getItem js/localStorage (:storage-key config/site)
+              when (some? raw)
+                dispatch! :hydrate-storage $ w-log (parse-cirru-edn raw)
+            println "|App started."
+        |mount-target $ quote
+          def mount-target $ js/document.querySelector |.app
+        |persist-storage! $ quote
+          defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
+            format-cirru-edn $ :store @*reel
+        |reload! $ quote
+          defn reload! () $ if (nil? build-errors)
+            do (remove-watch *reel :changes) (clear-cache!)
+              add-watch *reel :changes $ fn (reel prev) (render-app!)
+              reset! *reel $ refresh-reel @*reel schema/store updater
+              hud! "\"ok~" "\"Ok"
+            hud! "\"error" build-errors
+        |render-app! $ quote
+          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
+        |repeat! $ quote
+          defn repeat! (duration cb)
+            js/setTimeout
+              fn () (cb)
+                repeat! (* 1000 duration) cb
+              * 1000 duration
+      :ns $ quote
+        ns app.main $ :require
+          [] respo.core :refer $ [] render! clear-cache!
+          [] app.comp.container :refer $ [] comp-container
+          [] app.updater :refer $ [] updater
+          [] app.schema :as schema
+          [] reel.util :refer $ [] listen-devtools!
+          [] reel.core :refer $ [] reel-updater refresh-reel
+          [] reel.schema :as reel-schema
+          [] app.util :refer $ [] focus-text!
+          app.config :as config
+          "\"./calcit.build-errors" :default build-errors
+          "\"bottom-tip" :default hud!
+    |app.schema $ {}
+      :defs $ {}
+        |config $ quote
+          def config $ {} (:storage-key |manuscript)
         |draft $ quote
           def draft $ {} (:id nil) (:text |) (:touch-id nil) (:mono? false)
         |store $ quote
@@ -115,13 +178,8 @@
                 merge draft $ {} (:id zero) (:touch-id zero)
             :pointer |zero
             :version nil
-        |config $ quote
-          def config $ {} (:storage-key |manuscript)
+      :ns $ quote (ns app.schema)
     |app.updater $ {}
-      :ns $ quote
-        ns app.updater $ :require
-          [] respo.cursor :refer $ [] update-states
-          [] app.schema :as schema
       :defs $ {}
         |updater $ quote
           defn updater (store op op-data op-id op-time)
@@ -154,64 +212,11 @@
                 :mono $ update-in store
                   [] :drafts (:pointer store) :mono?
                   , not
-    |app.main $ {}
       :ns $ quote
-        ns app.main $ :require
-          [] respo.core :refer $ [] render! clear-cache!
-          [] app.comp.container :refer $ [] comp-container
-          [] app.updater :refer $ [] updater
+        ns app.updater $ :require
+          [] respo.cursor :refer $ [] update-states
           [] app.schema :as schema
-          [] reel.util :refer $ [] listen-devtools!
-          [] reel.core :refer $ [] reel-updater refresh-reel
-          [] reel.schema :as reel-schema
-          [] app.util :refer $ [] focus-text!
-          app.config :as config
-          "\"./calcit.build-errors" :default build-errors
-          "\"bottom-tip" :default hud!
-      :defs $ {}
-        |render-app! $ quote
-          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |persist-storage! $ quote
-          defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
-            format-cirru-edn $ :store @*reel
-        |mount-target $ quote
-          def mount-target $ js/document.querySelector |.app
-        |*reel $ quote
-          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
-        |main! $ quote
-          defn main! ()
-            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
-            render-app!
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
-            listen-devtools! |k dispatch!
-            .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
-            repeat! 60 persist-storage!
-            let
-                raw $ .!getItem js/localStorage (:storage-key config/site)
-              when (some? raw)
-                dispatch! :hydrate-storage $ w-log (parse-cirru-edn raw)
-            println "|App started."
-        |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when
-              and config/dev? $ not= op :states
-              println "\"Dispatch:" op
-            reset! *reel $ reel-updater updater @*reel op op-data
-        |reload! $ quote
-          defn reload! () $ if (nil? build-errors)
-            do (remove-watch *reel :changes) (clear-cache!)
-              add-watch *reel :changes $ fn (reel prev) (render-app!)
-              reset! *reel $ refresh-reel @*reel schema/store updater
-              hud! "\"ok~" "\"Ok"
-            hud! "\"error" build-errors
-        |repeat! $ quote
-          defn repeat! (duration cb)
-            js/setTimeout
-              fn () (cb)
-                repeat! (* 1000 duration) cb
-              * 1000 duration
     |app.util $ {}
-      :ns $ quote (ns app.util)
       :defs $ {}
         |focus-text! $ quote
           defn focus-text! () $ js/requestAnimationFrame
@@ -219,10 +224,4 @@
               let
                   element $ js/document.querySelector |.text
                 .!focus element
-    |app.config $ {}
-      :ns $ quote (ns app.config)
-      :defs $ {}
-        |dev? $ quote
-          def dev? $ = "\"dev" (get-env "\"mode")
-        |site $ quote
-          def site $ {} (:storage-key "\"manuscript")
+      :ns $ quote (ns app.util)
