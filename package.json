@@ -3,7 +3,12 @@
   "version": "0.1.0",
   "description": "A Notebook",
   "main": "index.js",
-  "scripts": {},
+  "packageManager": "yarn@4.12.0",
+  "scripts": {
+    "compile": "cr js",
+    "build": "cr js && yarn vite build --base=./",
+    "dev": "yarn vite"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:Memkits/manuscript.git"
@@ -12,10 +17,10 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^6.4.2"
+    "vite": "^8.0.8"
   },
   "dependencies": {
-    "@calcit/procs": "^0.8.46",
+    "@calcit/procs": "^0.12.14",
     "shortid": "^2.2.16"
   }
 }
