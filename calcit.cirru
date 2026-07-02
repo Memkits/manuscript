@@ -1,12 +1,12 @@
 
-{} (:package |app)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
   :entries $ {}
   :files $ {}
     |app.comp.container $ %{} :FileEntry
       :defs $ {}
-        |comp-container $ %{} :CodeEntry (:doc |)
+        |comp-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -36,7 +36,9 @@
                     :value $ :text (get drafts pointer)
                     :spellcheck $ not mono?
                     :style $ merge
-                      if mono? $ {} (:font-family ui/font-code) (:font-size 14)
+                      if mono?
+                        {} (:font-family ui/font-code) (:font-size 14)
+                        {}
                     :class-name $ str-spaced css/flex css/textarea |text style-textbox
                     :placeholder |new...
                     :on-input $ fn (e d!)
@@ -46,7 +48,8 @@
                   ; comp-inspect |draft
                     get-in store $ [] :drafts pointer
                     {} (:position :absolute) (:bottom 0)
-        |comp-mono $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-mono $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defcomp comp-mono (mono?)
               span
@@ -56,7 +59,8 @@
                     :color $ if mono? (hsl 0 0 40) (hsl 0 0 90)
                   :on-click $ fn (e d!) (d! :mono nil)
                 <> |Mono
-        |comp-title $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-title $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defcomp comp-title (draft idx pointer)
               div
@@ -82,27 +86,32 @@
                           :color $ hsl 0 0 80 0.5
                           :font-style :italic
                         <> title $ {} (:color :white)
-        |style-mono-mark $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |style-mono-mark $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defstyle style-mono-mark $ {}
-              "\"&" $ {} (:position :absolute) (:right 8) (:bottom 8) (:cursor :pointer)
-        |style-side-container $ %{} :CodeEntry (:doc |)
+              |& $ {} (:position :absolute) (:right 8) (:bottom 8) (:cursor :pointer)
+          :examples $ []
+        |style-side-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defstyle style-side-container $ {}
-              "\"&" $ {} (:width 240)
+              |& $ {} (:width 240)
                 :background-color $ hsl 170 35 24
                 :position :relative
                 :color :white
                 :overflow :auto
-        |style-textbox $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |style-textbox $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defstyle style-textbox $ {}
-              "\"&" $ {} (:border :none) (:line-height |1.6em) (:font-size 16) (:outline :none) (:background-color :white) (:resize :none) (:padding "|16px 8px") (:padding-bottom 400)
-        |style-title $ %{} :CodeEntry (:doc |)
+              |& $ {} (:border :none) (:line-height |1.6em) (:font-size 16) (:outline :none) (:background-color :white) (:resize :none) (:padding "|16px 8px") (:padding-bottom 400)
+          :examples $ []
+        |style-title $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defstyle style-title $ {}
-              "\"&" $ {} (:padding "|0 8px") (:line-height |32px) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:cursor :pointer) (:transition-duration |300ms) (:transition-property |top) (:position :absolute) (:width |100%)
-      :ns $ %{} :CodeEntry (:doc |)
+              |& $ {} (:padding "|0 8px") (:line-height |32px) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:cursor :pointer) (:transition-duration |300ms) (:transition-property |top) (:position :absolute) (:width |100%)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
             respo.css :refer $ defstyle
@@ -117,30 +126,34 @@
             app.util :refer $ focus-text!
     |app.config $ %{} :FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |)
+        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def dev? $ = "\"dev" (get-env "\"mode" "\"release")
-        |site $ %{} :CodeEntry (:doc |)
+            def dev? $ = |dev (get-env |mode |release)
+          :examples $ []
+        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def site $ {} (:storage-key "\"manuscript")
-      :ns $ %{} :CodeEntry (:doc |)
+            def site $ {} (:storage-key |manuscript)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns app.config)
     |app.main $ %{} :FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |)
+        |*reel $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
-        |dispatch! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn dispatch! (op)
               when
                 and config/dev? $ not= (nth op 0) :states
-                println "\"Dispatch:" op
+                println |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
-        |main! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn main! ()
-              println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+              println "|Running mode:" $ if config/dev? |dev |release
               render-app!
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
@@ -151,32 +164,38 @@
                 when (some? raw)
                   dispatch! $ :: :hydrate-storage (parse-cirru-edn raw)
               println "|App started."
-        |mount-target $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
-        |persist-storage! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |persist-storage! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
               format-cirru-edn $ :store @*reel
-        |reload! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
                 add-watch *reel :changes $ fn (reel prev) (render-app!)
                 reset! *reel $ refresh-reel @*reel schema/store updater
-                hud! "\"ok~" "\"Ok"
-              hud! "\"error" build-errors
-        |render-app! $ %{} :CodeEntry (:doc |)
+                hud! |ok~ |Ok
+              hud! |error build-errors
+          :examples $ []
+        |render-app! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |repeat! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |repeat! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn repeat! (duration cb)
               js/setTimeout
                 fn () (cb)
                   repeat! (* 1000 duration) cb
                 * 1000 duration
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.main $ :require
             respo.core :refer $ render! clear-cache!
@@ -188,17 +207,19 @@
             reel.schema :as reel-schema
             app.util :refer $ focus-text!
             app.config :as config
-            "\"./calcit.build-errors" :default build-errors
-            "\"bottom-tip" :default hud!
+            |./calcit.build-errors :default build-errors
+            |bottom-tip :default hud!
     |app.schema $ %{} :FileEntry
       :defs $ {}
-        |config $ %{} :CodeEntry (:doc |)
+        |config $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def config $ {} (:storage-key |manuscript)
-        |draft $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |draft $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def draft $ {} (:id nil) (:text |) (:touch-id nil) (:mono? false)
-        |store $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def store $ {}
               :states $ {}
@@ -208,18 +229,18 @@
                   merge draft $ {} (:id zero) (:touch-id zero)
               :pointer |zero
               :version nil
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns app.schema)
     |app.updater $ %{} :FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |)
+        |updater $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn updater (store op op-id op-time)
               let
                   pointer $ :pointer store
                 tag-match op
-                    :states cursor s
-                    update-states store cursor s
+                  (:states cursor s) (update-states store cursor s)
                   (:text op-data)
                     -> store
                       assoc-in ([] :drafts pointer :text) op-data
@@ -247,19 +268,21 @@
                       [] :drafts (:pointer store) :mono?
                       , not
                   _ $ do (eprintln "|Unknown op:" op) store
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.updater $ :require
             respo.cursor :refer $ update-states
             app.schema :as schema
     |app.util $ %{} :FileEntry
       :defs $ {}
-        |focus-text! $ %{} :CodeEntry (:doc |)
+        |focus-text! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn focus-text! () $ js/requestAnimationFrame
               fn (t)
                 let
                     element $ js/document.querySelector |.text
                   .!focus element
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns app.util)

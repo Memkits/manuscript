@@ -20,7 +20,7 @@
     "vite": "^8.0.16"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.14",
+    "@calcit/procs": "^0.12.47",
     "shortid": "^2.2.16"
   }
 }
