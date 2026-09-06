@@ -1,21 +1,27 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --full` first. Manual edits must follow format and schema conventions, then run `calcit edit format`.") (:package |app)
   :entries $ {}
+    :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
+      :feature-policy $ {}
+      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+      :type-slots $ {}
   :files $ {}
-    |app.comp.container $ %{} :FileEntry
+    'app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        |comp-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
               let
-                  store $ :store reel
-                  states $ :states store
-                  cursor $ or (:cursor states) ([])
-                  drafts $ :drafts store
-                  pointer $ :pointer store
-                  mono? $ get-in store ([] :drafts pointer :mono?)
+                  reel-state $ unsafe-coerce reel 'reel.core/ReelState
+                  store $ unsafe-coerce
+                    &map:get (unsafe-coerce reel-state 'Map) :store
+                    :: 'Map
+                  states $ unsafe-coerce (&map:get store :states) 'Map
+                  drafts $ unsafe-coerce (&map:get store :drafts) 'Map
+                  pointer $ &map:get store :pointer
+                  mono? $ option:unwrap-or
+                    get-in store $ [] :drafts pointer :mono?
+                    , false
                 div
                   {} $ :class-name (str-spaced css/global css/fullscreen css/row)
                   div
@@ -26,14 +32,21 @@
                           + 120 $ * 32 (count drafts)
                       -> drafts (.to-list) (.map last)
                         .sort-by $ fn (draft)
-                          negate $ if
-                            blank? $ :text draft
-                            , js/Number.MAX_VALUE (:touch-id draft)
+                          let
+                              draft-map $ unsafe-coerce draft 'Map
+                            negate $ if
+                              blank? $ unsafe-coerce (&map:get draft-map :text) 'String
+                              , js/Number.MAX_VALUE
+                                unsafe-coerce (&map:get draft-map :touch-id) 'Number
                         map-indexed $ fn (idx draft)
-                          [] (:id draft) (comp-title draft idx pointer)
+                          let
+                              draft-map $ unsafe-coerce draft 'Map
+                            [] (&map:get draft-map :id) (comp-title draft idx pointer)
                         .sort-by first
                   textarea $ {}
-                    :value $ :text (get drafts pointer)
+                    :value $ option:unwrap-or
+                      get-in drafts $ [] pointer :text
+                      , |
                     :spellcheck $ not mono?
                     :style $ merge
                       if mono?
@@ -42,14 +55,15 @@
                     :class-name $ str-spaced css/flex css/textarea |text style-textbox
                     :placeholder |new...
                     :on-input $ fn (e d!)
-                      d! :text $ :value e
+                      d! :text $ &map:get (unsafe-coerce e 'Map) :value
                   comp-mono mono?
                   comp-reel (>> states :reel) reel $ {}
                   ; comp-inspect |draft
                     get-in store $ [] :drafts pointer
                     {} (:position :absolute) (:bottom 0)
           :examples $ []
-        |comp-mono $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'comp-mono $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-mono (mono?)
               span
@@ -60,39 +74,44 @@
                   :on-click $ fn (e d!) (d! :mono nil)
                 <> |Mono
           :examples $ []
-        |comp-title $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'comp-title $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-title (draft idx pointer)
-              div
-                {} (:class-name style-title)
-                  :style $ merge
-                    {} $ :top
-                      + 16 $ * idx 32
-                    if
-                      = pointer $ :id draft
-                      {} $ :background-color (hsl 0 0 100 0.2)
-                  :on-click $ fn (e d!)
-                    d! :pointer $ :id draft
-                    focus-text!
-                let
-                    text $ :text draft
-                  if (.blank? text)
+              let
+                  draft-map $ unsafe-coerce draft 'Map
+                  draft-id $ &map:get draft-map :id
+                  text $ unsafe-coerce (&map:get draft-map :text) (:: 'String)
+                div
+                  {} (:class-name style-title)
+                    :style $ if (= pointer draft-id)
+                      {}
+                        :background-color $ hsl 0 0 100 0.2
+                        :top $ + 16 (* idx 32)
+                      {} $ :top
+                        + 16 $ * idx 32
+                    :on-click $ fn (e d!) (d! :pointer draft-id) (focus-text!)
+                  if (blank? text)
                     <> |new... $ {}
                       :color $ hsl 0 0 100 0.3
                     let
-                        title $ first (.split-lines text)
-                      if (.blank? title)
+                        title $ option:unwrap-or
+                          first $ split-lines text
+                          , |
+                      if (blank? title)
                         <> |<private> $ {}
                           :color $ hsl 0 0 80 0.5
                           :font-style :italic
                         <> title $ {} (:color :white)
           :examples $ []
-        |style-mono-mark $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'style-mono-mark $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstyle style-mono-mark $ {}
               |& $ {} (:position :absolute) (:right 8) (:bottom 8) (:cursor :pointer)
           :examples $ []
-        |style-side-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'style-side-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstyle style-side-container $ {}
               |& $ {} (:width 240)
@@ -101,17 +120,20 @@
                 :color :white
                 :overflow :auto
           :examples $ []
-        |style-textbox $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'style-textbox $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstyle style-textbox $ {}
               |& $ {} (:border :none) (:line-height |1.6em) (:font-size 16) (:outline :none) (:background-color :white) (:resize :none) (:padding "|16px 8px") (:padding-bottom 400)
           :examples $ []
-        |style-title $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'style-title $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstyle style-title $ {}
               |& $ {} (:padding "|0 8px") (:line-height |32px) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:cursor :pointer) (:transition-duration |300ms) (:transition-property |top) (:position :absolute) (:width |100%)
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
             respo.css :refer $ defstyle
@@ -124,57 +146,68 @@
             clojure.string :as string
             respo.comp.inspect :refer $ comp-inspect
             app.util :refer $ focus-text!
-    |app.config $ %{} :FileEntry
+    'app.config $ %{} 'FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def dev? $ = |dev (get-env |mode |release)
+            def dev? $ = |dev
+              option:unwrap-or (get-env |mode) |release
           :examples $ []
-        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'site $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key |manuscript)
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.config)
-    |app.main $ %{} :FileEntry
+    'app.main $ %{} 'FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-        |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op)
               when
-                and config/dev? $ not= (nth op 0) :states
+                and config/dev? $ not=
+                  option:unwrap-or (nth op 0) :unknown
+                  , :states
                 println |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               println "|Running mode:" $ if config/dev? |dev |release
               render-app!
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
-              .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
+              .!addEventListener (unsafe-coerce js/window 'JsObject) |beforeunload $ fn (event) (persist-storage!)
               repeat! 60 persist-storage!
               let
-                  raw $ .!getItem js/localStorage (:storage-key config/site)
-                when (some? raw)
-                  dispatch! $ :: :hydrate-storage (parse-cirru-edn raw)
+                  raw $ .!getItem (unsafe-coerce js/localStorage 'JsObject) (:storage-key config/site)
+                when (js-present? raw)
+                  dispatch! $ :: :hydrate-storage
+                    parse-cirru-edn $ unsafe-coerce raw 'String
               println "|App started."
           :examples $ []
-        |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
           :examples $ []
-        |persist-storage! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
+            defn persist-storage! () $ .!setItem (unsafe-coerce js/localStorage 'JsObject) (:storage-key config/site)
               format-cirru-edn $ :store @*reel
           :examples $ []
-        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -183,11 +216,13 @@
                 hud! |ok~ |Ok
               hud! |error build-errors
           :examples $ []
-        |render-app! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
-        |repeat! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'repeat! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn repeat! (duration cb)
               js/setTimeout
@@ -195,7 +230,8 @@
                   repeat! (* 1000 duration) cb
                 * 1000 duration
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.main $ :require
             respo.core :refer $ render! clear-cache!
@@ -209,17 +245,19 @@
             app.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
-    |app.schema $ %{} :FileEntry
+    'app.schema $ %{} 'FileEntry
       :defs $ {}
-        |config $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        'config $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def config $ {} (:storage-key |manuscript)
           :examples $ []
-        |draft $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def draft $ {} (:id nil) (:text |) (:touch-id nil) (:mono? false)
           :examples $ []
-        |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def store $ {}
               :states $ {}
@@ -230,16 +268,18 @@
               :pointer |zero
               :version nil
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.schema)
-    |app.updater $ %{} :FileEntry
+    'app.updater $ %{} 'FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn updater (store op op-id op-time)
               let
-                  pointer $ :pointer store
-                tag-match op
+                  store-map $ unsafe-coerce store 'Map
+                  pointer $ &map:get store-map :pointer
+                match op
                   (:states cursor s) (update-states store cursor s)
                   (:text op-data)
                     -> store
@@ -247,9 +287,11 @@
                       assoc-in ([] :drafts pointer :touch-id) op-time
                       update :drafts $ fn (drafts)
                         let
-                            empty-drafts $ -> drafts (.to-list) (.map last)
+                            empty-drafts $ -> drafts (to-pairs) (.map last)
                               filter $ fn (draft)
-                                .blank? $ :text draft
+                                blank? $ unsafe-coerce
+                                  &map:get (unsafe-coerce draft 'Map) :text
+                                  :: 'String
                           cond
                               = 1 $ count empty-drafts
                               , drafts
@@ -258,31 +300,35 @@
                                 {} (:id op-id) (:touch-id op-time)
                             true $ let
                                 empty-ids $ ->
-                                  map empty-drafts $ fn (x) (:id x)
+                                  map empty-drafts $ fn (x)
+                                    &map:get (unsafe-coerce x 'Map) :id
                                   filter $ fn (x) (not= x pointer)
                               dissoc drafts & empty-ids
                   (:pointer op-data) (assoc store :pointer op-data)
                   (:hydrate-storage op-data) op-data
                   (:mono)
                     update-in store
-                      [] :drafts (:pointer store) :mono?
+                      [] :drafts (&map:get store-map :pointer) :mono?
                       , not
                   _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.updater $ :require
             respo.cursor :refer $ update-states
             app.schema :as schema
-    |app.util $ %{} :FileEntry
+    'app.util $ %{} 'FileEntry
       :defs $ {}
-        |focus-text! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        'focus-text! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn focus-text! () $ js/requestAnimationFrame
               fn (t)
                 let
                     element $ js/document.querySelector |.text
-                  .!focus element
+                  when (js-present? element)
+                    .!focus $ unsafe-coerce element 'JsObject
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.util)
