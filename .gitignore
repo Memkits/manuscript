@@ -7,3 +7,6 @@ node_modules/
 dist/
 .yarn/*.gz
 .DS_Store
+dl-out
+.pnp.cjs
+.pnp.loader.mjs
