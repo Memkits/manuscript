@@ -1,6 +1,6 @@
 {
   "name": "manuscript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Notebook",
   "main": "index.js",
   "packageManager": "yarn@4.12.0",
@@ -20,7 +20,7 @@
     "vite": "^8.2.2"
   },
   "dependencies": {
-    "@calcit/procs": "0.18.1",
+    "@calcit/procs": "0.22.0-alpha.3",
     "shortid": "^2.2.16"
   }
 }

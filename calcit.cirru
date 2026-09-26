@@ -326,7 +326,9 @@
                 (:mono)
                   match (get store.:drafts pointer)
                     (:some draft)
-                      assoc store :drafts $ assoc store.:drafts pointer $ assoc draft :mono? (not draft.:mono?)
+                      assoc store :drafts $ assoc store.:drafts pointer $ assert-type
+                        assoc draft :mono? $ not draft.:mono?
+                        , 'app.schema/Draft
                     (:none) store
                 _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
