@@ -3,7 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
+    {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
       :type-slots $ {}
@@ -341,12 +341,11 @@
       :defs $ {} $ 'focus-text!
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn focus-text! ()
-            do
-              request-animation-frame! $ fn (timestamp)
-                match (query-selector |.text)
-                  (:some element) (element-focus! element)
-                  (:none) &unit
-              , &unit
+            request-animation-frame! $ fn (timestamp)
+              match (query-selector |.text)
+                (:some element) (element-focus! element)
+                (:none) &unit
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []

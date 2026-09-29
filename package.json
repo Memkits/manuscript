@@ -1,12 +1,12 @@
 {
   "name": "manuscript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A Notebook",
   "main": "index.js",
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.18.0",
   "scripts": {
     "compile": "calcit calcit.cirru js",
-    "build": "calcit calcit.cirru js && yarn vite build --base=./",
+    "build": "yarn compile && vite build",
     "dev": "yarn vite"
   },
   "repository": {
@@ -17,10 +17,10 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^8.2.2"
+    "vite": "8.3.1"
   },
   "dependencies": {
-    "@calcit/procs": "0.18.1",
+    "@calcit/procs": "0.27.0",
     "shortid": "^2.2.16"
   }
 }
