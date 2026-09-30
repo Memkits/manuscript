@@ -5,7 +5,7 @@
   :entries $ {} $ :default
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/
       :type-slots $ {}
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
@@ -13,7 +13,7 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ decode-map-as (&map:get reel :store) app.schema/Store
+                store $ assert-type (&map:get reel :store) app.schema/Store
                 states store.:states
                 drafts store.:drafts
                 pointer store.:pointer
@@ -45,8 +45,7 @@
                   :class-name $ str-spaced css/flex css/textarea |text style-textbox
                   :placeholder |new...
                   :on-input $ fn (event dispatch!)
-                    dispatch! $ app.schema/Op :text $ event-value
-                      assert-type event $ :: 'Map 'Tag 'Dynamic
+                    dispatch! $ app.schema/Op :text $ event-value (assert-type event 'respo.schema/RespoEvent)
                 comp-mono mono?
                 comp-reel (>> states :reel) reel $ {}
           :examples $ []
@@ -98,11 +97,10 @@
             :args $ [] 'app.schema/Draft 'Number 'String
             :features $ #{} :js-ffi
         'event-value $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn event-value (event)
-            assert-type (&map:get event :value) 'String
+          :code $ quote $ defn event-value (event) (assert-type event.:value 'String)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] 'respo.schema/RespoEvent
         'style-mono-mark $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-mono-mark
             {} $ |& $ {} (:position :absolute) (:right 8) (:bottom 8) (:cursor :pointer)
@@ -174,9 +172,9 @@
             set-before-unload! $ fn (event) (persist-storage!)
             repeat! 60 persist-storage!
             match
-              storage-get $ config/site :storage-key
+              storage-get $ option:unwrap $ get config/site :storage-key
               (:some raw)
-                dispatch! $ app.schema/Op :hydrate-storage $ decode-map-as (parse-cirru-edn raw) app.schema/Store
+                dispatch! $ app.schema/Op :hydrate-storage $ app.schema/decode-store (parse-cirru-edn raw)
               (:none) &unit
             println "|App started."
           :examples $ []
@@ -190,8 +188,9 @@
           :schema $ :: 'js-ffi.browser/DomElementHost
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
-            storage-set! (config/site :storage-key)
-              format-cirru-edn $ decode-map-as (&map:get @*reel :store) app.schema/Store
+            storage-set!
+              option:unwrap $ get config/site :storage-key
+              format-cirru-edn $ assert-type (&map:get @*reel :store) app.schema/Store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -226,17 +225,17 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            [] respo.core :refer $ [] render! clear-cache!
-            [] app.comp.container :refer $ [] comp-container
-            [] app.updater :refer $ [] updater
-            [] app.schema :as app.schema
-            [] reel.util :refer $ [] listen-devtools!
-            [] reel.core :refer $ [] reel-updater refresh-reel
-            [] reel.schema :as reel-schema
-            [] app.config :as config
-            [] |./calcit.build-errors :default build-errors
-            [] |bottom-tip :default hud!
-            [] js-ffi.browser :refer $ [] query-selector set-before-unload! set-interval! storage-get storage-set!
+            respo.core :refer $ [] render! clear-cache!
+            app.comp.container :refer $ [] comp-container
+            app.updater :refer $ [] updater
+            app.schema :as app.schema
+            reel.util :refer $ [] listen-devtools!
+            reel.core :refer $ [] reel-updater refresh-reel
+            reel.schema :as reel-schema
+            app.config :as config
+            |./calcit.build-errors.mjs :default build-errors
+            |bottom-tip :default hud!
+            js-ffi.browser :refer $ [] query-selector set-before-unload! set-interval! storage-get storage-set!
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Draft $ %{} 'CodeEntry (:doc |)
@@ -276,6 +275,27 @@
             {} $ :storage-key |manuscript
           :examples $ []
           :schema $ :: 'Map 'Tag 'String
+        'decode-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-store (raw)
+            decode-map-as
+              {}
+                :states $ option:unwrap $ get raw :states
+                :drafts $ filter-map-kv
+                  assert-type
+                    option:unwrap $ get raw :drafts
+                    :: 'Map 'String 'Dynamic
+                  fn (key draft)
+                    MapEntryDecision :keep key $ {}
+                      :id $ option:unwrap $ get draft :id
+                      :text $ option:unwrap $ get draft :text
+                      :touch-id $ option:unwrap $ get draft :touch-id
+                      :mono? $ option:unwrap $ get draft :mono?
+                :pointer $ option:unwrap $ get raw :pointer
+                :version $ option:unwrap $ get raw :version
+              , Store
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
+            :args $ [] 'Dynamic
         'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def draft
             Draft :id | :text | :touch-id 0 :mono? false
@@ -298,7 +318,7 @@
                 pointer store.:pointer
               match op
                 (:states cursor state)
-                  decode-map-as (update-states store cursor state) app.schema/Store
+                  assert-type (update-states store cursor state) app.schema/Store
                 (:text text)
                   let
                       drafts store.:drafts
@@ -319,7 +339,7 @@
                             empty-ids $ -> empty-drafts
                               map $ fn (draft) draft.:id
                               filter $ fn (draft-id) (not= draft-id pointer)
-                          dissoc changed-drafts & empty-ids
+                          dissoc changed-drafts & $ &set:to-list empty-ids
                     assoc store :drafts next-drafts
                 (:pointer pointer-id) (assoc store :pointer pointer-id)
                 (:hydrate-storage data) data
