@@ -285,11 +285,14 @@
                     option:unwrap $ get raw :drafts
                     :: 'Map 'String 'Dynamic
                   fn (key draft)
-                    MapEntryDecision :keep key $ {}
-                      :id $ option:unwrap $ get draft :id
-                      :text $ option:unwrap $ get draft :text
-                      :touch-id $ option:unwrap $ get draft :touch-id
-                      :mono? $ option:unwrap $ get draft :mono?
+                    if
+                      = key $ option:unwrap $ get draft :id
+                      MapEntryDecision :keep key $ {}
+                        :id $ option:unwrap $ get draft :id
+                        :text $ option:unwrap $ get draft :text
+                        :touch-id $ option:unwrap $ get draft :touch-id
+                        :mono? $ option:unwrap $ get draft :mono?
+                      raise "|Draft key and ID differ"
                 :pointer $ option:unwrap $ get raw :pointer
                 :version $ option:unwrap $ get raw :version
               , Store

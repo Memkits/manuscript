@@ -108,5 +108,6 @@ test("external decoder rejects missing fields, wrong state/key types and malform
     assert.throws(() => decode_store(c.assoc(legacyStore(), t.drafts, map("saved", c.assoc(draft, key, bad)))));
   }
   assert.throws(() => decode_store(c.assoc(legacyStore(), t.drafts, map(1, draft))));
+  assert.throws(() => decode_store(c.assoc(legacyStore(), t.drafts, map("saved", c.assoc(draft, t.id, "other")))));
   assert.throws(() => decode_store(c.assoc(legacyStore(), t.drafts, map("saved", c.dissoc(draft, t.text)))));
 });
