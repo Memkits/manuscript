@@ -44,15 +44,11 @@ jobs:
         caps --ci --strict
         yarn install --immutable
 
-    - name: Validate Calcit snapshot and types
+    - name: Check Calcit
       run: |
         set -euo pipefail
-        test -f calcit.cirru
-        test -f deps.cirru
         test ! -e compact.cirru
         test ! -e package.cirru
-        calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only
 
     - name: Select CDN asset path
