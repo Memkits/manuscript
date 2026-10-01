@@ -7,7 +7,7 @@
   "scripts": {
     "compile": "calcit calcit.cirru js",
     "build": "yarn compile && vite build",
-    "dev": "yarn vite"
+    "dev": "yarn compile && vite"
   },
   "repository": {
     "type": "git",
