@@ -28,15 +28,30 @@ test("actual dispatch and persistence preserve the manuscript key and edited typ
   const storageDescriptor = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
   const writes = [];
   try {
-    const storage = { setItem(key, value) { writes.push([key, value]); } };
+    const storage = {
+      get length() { return writes.length; },
+      getItem() { return null; },
+      key() { return null; },
+      setItem(key, value) { writes.push([key, value]); },
+      removeItem() {},
+      clear() {},
+    };
     globalThis.window = { localStorage: storage };
     Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
     const t = c.init_tags(["text", "drafts", "zero", "store"]);
     main.dispatch_$x_(c._PCT__$o__$o_(Op, t.text, "persisted note"));
+    const controlTags = c.init_tags(["reel/recall", "reel/run"]);
+    main.dispatch_$x_(c._PCT__$o__$o_(Op, controlTags["reel/recall"], 0));
+    const initialStore = c.option_$o_unwrap(c.get(c.deref(main._$s_reel), t.store));
+    const initialDrafts = c.option_$o_unwrap(c.get(initialStore, t.drafts));
+    assert.equal(c.option_$o_unwrap(c.get(c.option_$o_unwrap(c.get(initialDrafts, "zero")), t.text)), "");
+    main.dispatch_$x_(c._PCT__$o__$o_(Op, controlTags["reel/run"]));
     main.persist_storage_$x_();
     assert.equal(writes.length, 1);
     assert.equal(writes[0][0], "manuscript");
     const saved = decode_store(c.parse_cirru_edn(writes[0][1]));
+    const hydrateTag = c.init_tags(["hydrate-storage"])["hydrate-storage"];
+    main.dispatch_$x_(c._PCT__$o__$o_(Op, hydrateTag, saved));
     assert.ok(c._$e_(saved, c.option_$o_unwrap(c.get(c.deref(main._$s_reel), t.store))));
     const drafts = c.option_$o_unwrap(c.get(saved, t.drafts));
     assert.equal(c.option_$o_unwrap(c.get(c.option_$o_unwrap(c.get(drafts, "zero")), t.text)), "persisted note");

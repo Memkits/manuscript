@@ -5,14 +5,14 @@ import { store, Op, decode_store } from "../js-out/app.schema.mjs";
 import { updater } from "../js-out/app.updater.mjs";
 import { comp_container, comp_mono, comp_title } from "../js-out/app.comp.container.mjs";
 import { RespoEvent } from "../js-out/respo.schema.mjs";
-import { component_$q_, component_tree } from "../js-out/respo.util.detect.mjs";
+import { component_$q_, component_tree, child_pair_value } from "../js-out/respo.util.detect.mjs";
 import { make_string } from "../js-out/respo.render.html.mjs";
-import { reel } from "../js-out/reel.schema.mjs";
+import { new_reel } from "../js-out/reel.typed.mjs";
 const t = c.init_tags(["states", "editor", "data", "drafts", "id", "text", "touch-id", "mono?", "version", "pointer", "store", "base", "event", "children", "input", "click", "value"]);
 const map = c._$n__$M_;
 const get = (value, key) => c.option_$o_unwrap(c.get(value, key));
 const op = (tag, ...payload) => c._PCT__$o__$o_(Op, c.init_tags([tag])[tag], ...payload);
-const newReel = (db) => c.assoc(c.assoc(reel, t.store, db), t.base, db);
+const newReel = (db) => new_reel(db);
 const draftAt = (db, id) => get(get(db, t.drafts), id);
 function handlers(node, kind, found = []) {
   if (component_$q_(node)) return handlers(c.option_$o_unwrap(component_tree(node)), kind, found);
@@ -27,7 +27,7 @@ function handlers(node, kind, found = []) {
   }
   const children = c.get(node, t.children);
   if (c.option_$o_some_$q_(children)) {
-    for (const pair of c.option_$o_unwrap(children).toArray()) handlers(c.option_$o_unwrap(c.nth(pair, 1)), kind, found);
+    for (const pair of c.option_$o_unwrap(children).toArray()) handlers(child_pair_value(pair), kind, found);
   }
   return found;
 }
