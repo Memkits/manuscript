@@ -10,7 +10,7 @@ Demo: http://repo.memkits.org/manuscript/
 
 https://github.com/calcit-lang/respo-calcit-workflow
 
-Use paired Calcit/procs 0.30.1-alpha.4 (compiler prerelease), `caps --ci --strict`, and
+Use paired formal Calcit/procs 0.30.1, `caps --ci --strict`, and
 `yarn install --immutable`. Build with `yarn build`, then run
 `node --test tests/*.test.mjs`. Public upload verification uses cos-upload-action's
 built-in verify settings, with no extra CDN checker.
@@ -18,8 +18,12 @@ Canonical files are `calcit.cirru` and `deps.cirru`; retired `compact.cirru`
 and `package.cirru` are ignored and rejected by CI. Original server deployment
 paths and the `manuscript` local-storage key are preserved.
 
-Respo 0.16.122、UI 0.7.41、Reel 0.6.39、js-ffi 0.2.3 均使用正式精确 tag。
-升级后刷新已打开页面。Reel 使用真实 `State<Op,Store>`，业务操作/存档在真实边界检查；
+Respo 0.16.124、UI 0.8.0、Reel 0.6.41、js-ffi 0.2.5 均使用正式精确 tag。
+升级后重启开发服务并刷新已打开页面，UI 0.8 基础样式可能影响外观。
+启动先恢复存档，再渲染及注册自动保存；存档解析或解码失败时不会注册保存回调，
+避免原值被初始笔记覆盖。遇错应先备份并修复存档，不要清空浏览器数据。
+原 JS `hud!` 热重载错误提示保留，不用 `raise` 替代页面提示。
+Reel 使用真实 `State<Op,Store>`，业务操作/存档在真实边界检查；
 旧 Map 与嵌套 Draft Struct 存档仍可读取，笔记排序、唯一空草稿、私密标题和 Mono 行为不变。
 未知或 payload 不合法的业务操作会明确拒绝，不再以错误类型继续进入历史记录。
 这不是授权合并、发版或生产部署。
