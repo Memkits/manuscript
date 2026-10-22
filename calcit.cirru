@@ -178,16 +178,16 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
-            render-app!
-            add-watch! *reel :changes $ fn (reel previous) (render-app!)
-            listen-devtools! |k dispatch!
-            set-before-unload! $ fn (event) (persist-storage!)
-            repeat! 60 persist-storage!
             match
               storage-get $ option:unwrap $ get config/site :storage-key
               (:some raw)
                 dispatch! $ app.schema/Op :hydrate-storage $ app.schema/decode-store (parse-cirru-edn raw)
               (:none) &unit
+            render-app!
+            add-watch! *reel :changes $ fn (reel previous) (render-app!)
+            listen-devtools! |k dispatch!
+            set-before-unload! $ fn (event) (persist-storage!)
+            repeat! 60 persist-storage!
             println "|App started."
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
