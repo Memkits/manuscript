@@ -18,8 +18,11 @@ Canonical files are `calcit.cirru` and `deps.cirru`; retired `compact.cirru`
 and `package.cirru` are ignored and rejected by CI. Original server deployment
 paths and the `manuscript` local-storage key are preserved.
 
-Respo 0.16.124、UI 0.8.0、Reel 0.6.41、js-ffi 0.2.5 均使用正式精确 tag。
-升级后重启开发服务并刷新已打开页面，UI 0.8 基础样式可能影响外观。
+使用者影响：继续正式 Calcit CLI / procs 0.30.1，Respo 0.16.126、UI 0.8.1、Reel 0.6.42、js-ffi 0.2.6 均使用正式精确 tag，传递 Router 0.8.38。重新安装完整模块图、生成 JS 并刷新页面，不混装旧 alpha 缓存；Vite 8.3.3、npm 版本和 lock 不变。
+Map/Set 数量改用当前首选 `.len`，Option 旧入口改为方法，单参数 merge 恒等包装删除。默认值、求值次数及便笺算法不变。
+三个现有 DOM 回调和 event-value 使用真实 Map 事件合同，dispatch 仍是开放 Fn<Dynamic,Unit,rest Dynamic>，不伪装成封闭 Op；String 检查保留。
+CSS 静态长度/关键字按原渲染规则改为等价 String，动态尺寸表达式保持，不改尺寸/颜色/布局。
+删除旧 procs 0.27.0 的 npm 预批准例外，按普通正式包安装策略验证，不新增例外或永久验证脚本。
 启动先恢复存档，再渲染及注册自动保存；存档解析或解码失败时不会注册保存回调，
 避免原值被初始笔记覆盖。遇错应先备份并修复存档，不要清空浏览器数据。
 原 JS `hud!` 热重载错误提示保留，不用 `raise` 替代页面提示。
