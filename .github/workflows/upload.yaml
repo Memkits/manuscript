@@ -47,6 +47,7 @@ jobs:
         caps --ci --strict
         yarn install --immutable
         caps deps.cirru verify --toolchain
+        git diff --quiet -- deps.cirru package.json yarn.lock .yarnrc.yml
 
     - name: Check Calcit
       run: |
@@ -54,7 +55,7 @@ jobs:
         test ! -e compact.cirru
         test ! -e package.cirru
         calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
+        git diff --quiet -- calcit.cirru
         calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru --check-only --ns app.comp.container --ns app.config --ns app.main --ns app.schema --ns app.updater --ns app.util --summary-only --format json
         calcit calcit.cirru fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'

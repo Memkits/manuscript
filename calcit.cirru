@@ -26,7 +26,7 @@
                   {} $ :class-name style-side-container
                   list->
                     {} $ :style $ {}
-                      :height $ + 120 $ * 32 (count drafts)
+                      :height $ + 120 $ * 32 (.len drafts)
                     -> drafts vals (&set:to-list)
                       sort $ fn (a b)
                         if (blank? a.:text)
@@ -39,12 +39,16 @@
                     (:some draft) draft.:text
                     (:none) |
                   :spellcheck $ not mono?
-                  :style $ merge $ if mono?
-                    {} (:font-family ui/font-code) (:font-size 14)
+                  :style $ if mono?
+                    {} (:font-family ui/font-code) (:font-size |14px)
                     {}
                   :class-name $ str-spaced css/flex css/textarea |text style-textbox
                   :placeholder |new...
                   :on-input $ fn (event dispatch!)
+                    hint-fn $ {} (:return 'Unit)
+                      :args $ [] (:: 'Map 'Tag 'Dynamic)
+                        :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                          :args $ [] 'Dynamic
                     dispatch! $ app.schema/Op :text $ event-value event
                 comp-mono mono?
                 comp-typed-reel (>> states :reel) reel $ {}
@@ -60,6 +64,10 @@
                 :style $ {} $ :color
                   if mono? (hsl 0 0 40) (hsl 0 0 90)
                 :on-click $ fn (event dispatch!)
+                  hint-fn $ {} (:return 'Unit)
+                    :args $ [] (:: 'Map 'Tag 'Dynamic)
+                      :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                        :args $ [] 'Dynamic
                   dispatch! $ app.schema/Op :mono
               <> |Mono
           :examples $ []
@@ -78,20 +86,24 @@
                       :top $ + 16 $ * idx 32
                     {} $ :top $ + 16 (* idx 32)
                   :on-click $ fn (event dispatch!)
+                    hint-fn $ {} (:return 'Unit)
+                      :args $ [] (:: 'Map 'Tag 'Dynamic)
+                        :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                          :args $ [] 'Dynamic
                     dispatch! $ app.schema/Op :pointer draft-id
                     focus-text!
                 if (blank? text)
                   <> |new... $ {} $ :color
                     hsl 0 0 100 $ Option :some 0.3
                   let
-                      title $ option:unwrap-or
+                      title $ .unwrap-or
                         first $ split-lines text
                         , |
                     if (blank? title)
                       <> |<private> $ {}
                         :color $ hsl 0 0 80 $ Option :some 0.5
-                        :font-style :italic
-                      <> title $ {} $ :color :white
+                        :font-style |italic
+                      <> title $ {} $ :color |white
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'app.schema/Draft 'Number 'String
@@ -103,29 +115,29 @@
               , 'String
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'Dynamic
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
         'style-mono-mark $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-mono-mark
-            {} $ |& $ {} (:position :absolute) (:right 8) (:bottom 8) (:cursor :pointer)
+            {} $ |& $ {} (:position |absolute) (:right |8px) (:bottom |8px) (:cursor |pointer)
           :examples $ []
           :schema $ :: 'String
         'style-side-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-side-container
-            {} $ |& $ {} (:width 240)
+            {} $ |& $ {} (:width |240px)
               :background-color $ hsl 170 35 24
-              :position :relative
-              :color :white
-              :overflow :auto
+              :position |relative
+              :color |white
+              :overflow |auto
           :examples $ []
           :schema $ :: 'String
         'style-textbox $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-textbox
-            {} $ |& $ {} (:border :none) (:line-height |1.6em) (:font-size 16) (:outline :none) (:background-color :white) (:resize :none) (:padding "|16px 8px") (:padding-bottom 400)
+            {} $ |& $ {} (:border |none) (:line-height |1.6em) (:font-size |16px) (:outline |none) (:background-color |white) (:resize |none) (:padding "|16px 8px") (:padding-bottom |400px)
           :examples $ []
           :schema $ :: 'String
         'style-title $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-title
-            {} $ |& $ {} (:padding "|0 8px") (:line-height |32px) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:cursor :pointer) (:transition-duration |300ms) (:transition-property |top) (:position :absolute) (:width |100%)
+            {} $ |& $ {} (:padding "|0 8px") (:line-height |32px) (:white-space |nowrap) (:overflow |hidden) (:text-overflow |ellipsis) (:cursor |pointer) (:transition-duration |300ms) (:transition-property |top) (:position |absolute) (:width |100%)
           :examples $ []
           :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
@@ -142,7 +154,7 @@
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -179,7 +191,7 @@
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
             match
-              storage-get $ option:unwrap $ get config/site :storage-key
+              storage-get $ .unwrap $ get config/site :storage-key
               (:some raw)
                 dispatch! $ app.schema/Op :hydrate-storage $ app.schema/decode-store (parse-cirru-edn raw)
               (:none) &unit
@@ -385,7 +397,7 @@
                       empty-drafts $ -> changed-drafts vals $ filter
                         fn (draft) (blank? draft.:text)
                       next-drafts $ cond
-                          = 1 $ count empty-drafts
+                          = 1 $ .len empty-drafts
                           , changed-drafts
                         (empty? empty-drafts)
                           assoc changed-drafts op-id $ app.schema/Draft :id op-id :text | :touch-id op-time :mono? false
