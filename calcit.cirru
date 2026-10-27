@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |app.schema/Op
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -27,7 +27,7 @@
                   list->
                     {} $ :style $ {}
                       :height $ + 120 $ * 32 (.len drafts)
-                    -> drafts vals (&set:to-list)
+                    -> drafts distinct-values (&set:to-list)
                       sort $ fn (a b)
                         if (blank? a.:text)
                           if (blank? b.:text) 0 -1
@@ -234,7 +234,12 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*reel) dispatch!
+            render! mount-target (comp-container @*reel)
+              fn (op)
+                hint-fn $ {}
+                  :args $ [] 'app.schema/Op
+                  :return 'Unit
+                dispatch! op
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -394,7 +399,7 @@
                         (:none)
                           app.schema/Draft :id pointer :text text :touch-id op-time :mono? false
                       changed-drafts $ assoc drafts pointer changed-draft
-                      empty-drafts $ -> changed-drafts vals $ filter
+                      empty-drafts $ -> changed-drafts distinct-values $ filter
                         fn (draft) (blank? draft.:text)
                       next-drafts $ cond
                           = 1 $ .len empty-drafts
@@ -405,7 +410,9 @@
                             empty-ids $ -> empty-drafts
                               map $ fn (draft) draft.:id
                               filter $ fn (draft-id) (not= draft-id pointer)
-                          dissoc changed-drafts & $ &set:to-list empty-ids
+                          decode-map-as
+                            dissoc changed-drafts & $ &set:to-list empty-ids
+                            :: 'Map 'String 'app.schema/Draft
                     assoc store :drafts next-drafts
                 (:pointer pointer-id) (assoc store :pointer pointer-id)
                 (:hydrate-storage data) data
