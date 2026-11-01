@@ -10,7 +10,7 @@ Demo: http://repo.memkits.org/manuscript/
 
 开发工具链要求正式 Calcit CLI / `@calcit/procs` **0.32.1**，请重新安装完整模块图、生成 JS 并刷新。
 模块固定为已发布正式 Reel 0.7.0、UI 0.9.0、Respo 0.17.1、js-ffi 0.2.9，
-传递 STD 0.2.47 与 UI 固定的 Router 0.9.0-alpha.4；保留该兼容图，不单独混装其他维护线。
+传递 UI 固定的 Router 0.9.0-alpha.4；保留该兼容图，不单独混装其他维护线。
 Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔离期为一小时。
 
 便笺排序、唯一空草稿、私密标题、Mono、旧 Map/嵌套 Draft 存档及 `manuscript` 存储 key 保持。
