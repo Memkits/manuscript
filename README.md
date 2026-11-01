@@ -8,9 +8,9 @@ Demo: http://repo.memkits.org/manuscript/
 
 ### 使用者需要注意
 
-开发工具链要求正式 Calcit CLI / `@calcit/procs` **0.31.0**，请重新安装完整模块图、生成 JS 并刷新。
-模块固定为已发布的 Reel 0.7.0-alpha.2、UI 0.9.0-alpha.2、Respo 0.17.0-alpha.2、js-ffi 0.2.5，
-传递 Router 0.9.0-alpha.1；这些模块仍在 0.31 预发布维护线，不能与旧 0.30.1 图混装。
+开发工具链要求正式 Calcit CLI / `@calcit/procs` **0.32.1**，请重新安装完整模块图、生成 JS 并刷新。
+模块固定为已发布正式 Reel 0.7.0、UI 0.9.0、Respo 0.17.1、js-ffi 0.2.9，
+传递 UI 固定的 Router 0.9.0-alpha.4；保留该兼容图，不单独混装其他维护线。
 Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔离期为一小时。
 
 便笺排序、唯一空草稿、私密标题、Mono、旧 Map/嵌套 Draft 存档及 `manuscript` 存储 key 保持。
@@ -18,7 +18,9 @@ Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔
 多空草稿清理保留原 `dissoc` 参数展开和零 key 异常，只在其开放返回值进入 drafts 字段前检查 Map 类型。
 当前方法 spread 的限制与运行差异已向上游报告：[Calcit #2428](https://github.com/calcit-lang/calcit/issues/2428)。
 
-入口绑定既有 Op（包含业务和 Reel controls），renderer 回调转发给原受检 dispatch；
+官方 formatter 迁移七处旧类型标注。三个组件回调的 dispatch 合同收紧为单个既有 Op → Unit，
+与入口绑定的 Op（包含业务和 Reel controls）一致，不再声明可变参数 Dynamic。
+renderer 回调仍转发给原受检 dispatch；
 不改操作协议、存档恢复或保存顺序。启动仍先恢复成功再注册自动保存，解析/解码失败时原值不会被默认状态覆盖。
 `hud!` 仍在页面显示热更新状态和错误。UI 依赖升级可能影响样式，不承诺逐像素一致。
 本迁移不合并或部署应用。
@@ -27,7 +29,7 @@ Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔
 
 https://github.com/calcit-lang/respo-calcit-workflow
 
-Use paired formal Calcit/procs 0.31.0, `caps --ci --strict`, and
+Use paired formal Calcit/procs 0.32.1, `caps --ci --strict`, and
 `yarn install --immutable`. Build with `yarn build`, then run
 `node --test tests/*.test.mjs`. Public upload verification uses cos-upload-action's
 built-in verify settings, with no extra CDN checker.
