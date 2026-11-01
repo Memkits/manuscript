@@ -45,17 +45,14 @@
                   :class-name $ str-spaced css/flex css/textarea |text style-textbox
                   :placeholder |new...
                   :on-input $ fn (event dispatch!)
-                    hint-fn $ {} (:return 'Unit)
-                      :args $ [] (:: 'Map 'Tag 'Dynamic)
-                        :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
-                          :args $ [] 'Dynamic
+                    hint-fn $ Fn (Map Tag Dynamic)
+                      Fn app.schema/Op $ -> Unit
+                      -> Unit
                     dispatch! $ app.schema/Op :text $ event-value event
                 comp-mono mono?
                 comp-typed-reel (>> states :reel) reel $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component) (:features :js-ffi)
         'comp-mono $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-mono (mono?)
             span
@@ -64,15 +61,13 @@
                 :style $ {} $ :color
                   if mono? (hsl 0 0 40) (hsl 0 0 90)
                 :on-click $ fn (event dispatch!)
-                  hint-fn $ {} (:return 'Unit)
-                    :args $ [] (:: 'Map 'Tag 'Dynamic)
-                      :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
-                        :args $ [] 'Dynamic
+                  hint-fn $ Fn (Map Tag Dynamic)
+                    Fn app.schema/Op $ -> Unit
+                    -> Unit
                   dispatch! $ app.schema/Op :mono
               <> |Mono
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'Bool
+          :schema $ quote $ Fn Bool (-> respo.schema/Component)
         'comp-title $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-title (draft idx pointer)
             let
@@ -86,10 +81,9 @@
                       :top $ + 16 $ * idx 32
                     {} $ :top $ + 16 (* idx 32)
                   :on-click $ fn (event dispatch!)
-                    hint-fn $ {} (:return 'Unit)
-                      :args $ [] (:: 'Map 'Tag 'Dynamic)
-                        :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
-                          :args $ [] 'Dynamic
+                    hint-fn $ Fn (Map Tag Dynamic)
+                      Fn app.schema/Op $ -> Unit
+                      -> Unit
                     dispatch! $ app.schema/Op :pointer draft-id
                     focus-text!
                 if (blank? text)
@@ -105,22 +99,19 @@
                         :font-style |italic
                       <> title $ {} $ :color |white
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'app.schema/Draft 'Number 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.schema/Draft Number String (-> respo.schema/Component) (:features :js-ffi)
         'event-value $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn event-value (event)
             decode-map-as
               .unwrap $ get event :value
               , 'String
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> String)
         'style-mono-mark $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-mono-mark
             {} $ |& $ {} (:position |absolute) (:right |8px) (:bottom |8px) (:cursor |pointer)
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
         'style-side-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-side-container
             {} $ |& $ {} (:width |240px)
@@ -129,17 +120,17 @@
               :color |white
               :overflow |auto
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
         'style-textbox $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-textbox
             {} $ |& $ {} (:border |none) (:line-height |1.6em) (:font-size |16px) (:outline |none) (:background-color |white) (:resize |none) (:padding "|16px 8px") (:padding-bottom |400px)
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
         'style-title $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-title
             {} $ |& $ {} (:padding "|0 8px") (:line-height |32px) (:white-space |nowrap) (:overflow |hidden) (:text-overflow |ellipsis) (:cursor |pointer) (:transition-duration |300ms) (:transition-property |top) (:position |absolute) (:width |100%)
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.css :as css)
@@ -156,12 +147,12 @@
           :code $ quote $ def dev?
             = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} $ :storage-key |manuscript
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
@@ -169,7 +160,7 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel app.schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'reel.typed/State 'app.schema/Op 'app.schema/Store
+          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             if (enum? op)
@@ -184,9 +175,7 @@
               raise |Expected-Enum-operation
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -202,23 +191,19 @@
             repeat! 60 persist-storage!
             println "|App started."
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
             .unwrap $ dom/query-selector |.app
           :examples $ []
-          :schema $ :: 'respo.dom/DomElement
+          :schema $ quote respo.dom/DomElement
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
               .unwrap $ get config/site :storage-key
               format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -229,30 +214,23 @@
                 , &unit
               do (hud! |error build-errors) &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! mount-target (comp-container @*reel)
               fn (op)
-                hint-fn $ {}
-                  :args $ [] 'app.schema/Op
-                  :return 'Unit
+                hint-fn $ Fn app.schema/Op $ -> Unit
                 dispatch! op
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'repeat! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn repeat! (duration callback)
             set-interval! callback $ * 1000 duration
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number $ :: 'Fn
-              {} (:return 'Unit)
-                :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Number
+            Fn $ -> Unit
+            -> Number
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -273,10 +251,12 @@
         'Draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Draft (:id 'String) (:text 'String) (:touch-id 'Number) (:mono? 'Bool)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (:: 'List 'Dynamic) 'Dynamic
+            :states
+              quote $ List Dynamic
+              , 'Dynamic
             :text 'String
             :pointer 'String
             :hydrate-storage 'app.schema/Store
@@ -289,20 +269,20 @@
             :reel/reset
             :reel/remove 'Number
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ :: 'Map 'Dynamic 'Dynamic
-            :drafts $ :: 'Map 'String 'app.schema/Draft
+            :states $ quote $ Map Dynamic Dynamic
+            :drafts $ quote $ Map String app.schema/Draft
             :pointer 'String
             :version 'String
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'config $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def config
             {} $ :storage-key |manuscript
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
         'decode-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-op (op)
             match op
@@ -319,8 +299,7 @@
               (:mono) (Op :mono)
               _ $ raise |Invalid-business-operation
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
-            :args $ [] 'Enum
+          :schema $ quote $ Fn Enum (-> app.schema/Op)
         'decode-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-store (raw)
             let
@@ -357,28 +336,26 @@
                   , 'String
               Store :states states :drafts checked-drafts :pointer pointer :version version
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
-            :args $ [] 'Dynamic
+          :schema $ quote $ Fn Dynamic (-> app.schema/Store)
         'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def draft
             Draft :id | :text | :touch-id 0 :mono? false
           :examples $ []
-          :schema $ :: 'app.schema/Draft
+          :schema $ quote app.schema/Draft
         'saved-record->map $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn saved-record->map (raw)
             if (struct? raw) (&struct:to-map raw)
               decode-map-as raw $ :: 'Map 'Tag 'Dynamic
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Dynamic
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn Dynamic
+            -> $ Map Tag Dynamic
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :drafts
               {} $ |zero $ Draft :id |zero :text | :touch-id 0 :mono? false
               , :pointer |zero :version |
           :examples $ []
-          :schema $ :: 'app.schema/Store
+          :schema $ quote app.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
@@ -423,9 +400,7 @@
                     (:none) store
                 _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
-            :args $ [] 'app.schema/Store 'app.schema/Op 'String 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
@@ -441,9 +416,7 @@
                 (:none) &unit
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.util
           :require $ js-ffi.browser :refer $ element-focus! query-selector request-animation-frame!
