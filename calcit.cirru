@@ -45,7 +45,7 @@
                   :class-name $ str-spaced css/flex css/textarea |text style-textbox
                   :placeholder |new...
                   :on-input $ fn (event dispatch!)
-                    hint-fn $ Fn (Map Tag Dynamic)
+                    hint-fn $ Fn respo.schema/RespoEvent
                       Fn app.schema/Op $ -> Unit
                       -> Unit
                     dispatch! $ app.schema/Op :text $ event-value event
@@ -102,11 +102,9 @@
           :schema $ quote $ Fn app.schema/Draft Number String (-> respo.schema/Component) (:features :js-ffi)
         'event-value $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn event-value (event)
-            decode-map-as
-              .unwrap $ get event :value
-              , 'String
+            decode-map-as (:value event) 'String
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> String)
+          :schema $ quote $ Fn respo.schema/RespoEvent (-> String)
         'style-mono-mark $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-mono-mark
             {} $ |& $ {} (:position |absolute) (:right |8px) (:bottom |8px) (:cursor |pointer)
@@ -163,19 +161,15 @@
           :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            if (enum? op)
-              do
-                when config/dev? $ println |Dispatch: op
-                match (typed/decode-control op)
-                  (:some control)
-                    reset! *reel $ typed/apply-control updater @*reel control
-                  (:none)
-                    reset! *reel $ typed/record-op updater @*reel (app.schema/decode-op op) (generate-id!) (host/now-ms)
-                , &unit
-              raise |Expected-Enum-operation
+            when config/dev? $ println |Dispatch: op
+            match (typed/decode-control op)
+              (:some control)
+                reset! *reel $ typed/apply-control updater @*reel control
+              (:none)
+                reset! *reel $ typed/record-op updater @*reel (app.schema/decode-op op) (generate-id!) (host/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -249,33 +243,31 @@
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Draft $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Draft (:id 'String) (:text 'String) (:touch-id 'Number) (:mono? 'Bool)
+          :code $ quote $ defstruct Draft (:id String) (:text String) (:touch-id Number) (:mono? Bool)
           :examples $ []
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states
-              quote $ List Dynamic
-              , 'Dynamic
-            :text 'String
-            :pointer 'String
-            :hydrate-storage 'app.schema/Store
+            :states (List respo.schema/CoordKey) Dynamic
+            :text String
+            :pointer String
+            :hydrate-storage app.schema/Store
             :mono
             :reel/toggle
-            :reel/recall 'Number
+            :reel/recall Number
             :reel/run
             :reel/step
             :reel/merge
             :reel/reset
-            :reel/remove 'Number
+            :reel/remove Number
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ quote $ Map Dynamic Dynamic
-            :drafts $ quote $ Map String app.schema/Draft
-            :pointer 'String
-            :version 'String
+            :states $ Map Dynamic Dynamic
+            :drafts $ Map String app.schema/Draft
+            :pointer String
+            :version String
           :examples $ []
           :schema $ quote StructDef
         'config $ %{} 'CodeEntry (:doc |)
@@ -288,7 +280,7 @@
             match op
               (:states cursor state)
                 Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
+                  decode-map-as cursor $ List respo.schema/CoordKey
                   , state
               (:text text)
                 Op :text $ decode-map-as text 'String
@@ -299,14 +291,14 @@
               (:mono) (Op :mono)
               _ $ raise |Invalid-business-operation
           :examples $ []
-          :schema $ quote $ Fn Enum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'decode-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-store (raw)
             let
                 data $ saved-record->map raw
                 drafts $ decode-map-as
                   .unwrap $ get data :drafts
-                  :: 'Map 'String 'Dynamic
+                  Map String Dynamic
                 checked-drafts $ filter-map-kv drafts $ fn (key value)
                   let
                       row $ saved-record->map value
@@ -327,7 +319,7 @@
                       raise "|Draft key and ID differ"
                 states $ decode-map-as
                   .unwrap $ get data :states
-                  :: 'Map 'Dynamic 'Dynamic
+                  Map Dynamic Dynamic
                 pointer $ decode-map-as
                   .unwrap $ get data :pointer
                   , 'String
@@ -345,7 +337,7 @@
         'saved-record->map $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn saved-record->map (raw)
             if (struct? raw) (&struct:to-map raw)
-              decode-map-as raw $ :: 'Map 'Tag 'Dynamic
+              decode-map-as raw $ Map Tag Dynamic
           :examples $ []
           :schema $ quote $ Fn Dynamic
             -> $ Map Tag Dynamic
@@ -366,7 +358,7 @@
                 pointer store.:pointer
               match op
                 (:states cursor state)
-                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (:: 'Map 'Dynamic 'Dynamic)
+                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (Map Dynamic Dynamic)
                 (:text text)
                   let
                       drafts store.:drafts
@@ -389,7 +381,7 @@
                               filter $ fn (draft-id) (not= draft-id pointer)
                           decode-map-as
                             dissoc changed-drafts & $ &set:to-list empty-ids
-                            :: 'Map 'String 'app.schema/Draft
+                            Map String app.schema/Draft
                     assoc store :drafts next-drafts
                 (:pointer pointer-id) (assoc store :pointer pointer-id)
                 (:hydrate-storage data) data
