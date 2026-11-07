@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { registerHooks } from "node:module";
 import * as c from "../js-out/calcit.core.mjs";
 import { decode_store, Op } from "../js-out/app.schema.mjs";
+import { Control } from "../js-out/reel.typed.mjs";
 const descriptor = Object.getOwnPropertyDescriptor(globalThis, "document");
 const element = { fixture: "actual mount target" };
 Object.defineProperty(globalThis, "document", { configurable: true, value: {
@@ -40,12 +41,12 @@ test("actual dispatch and persistence preserve the manuscript key and edited typ
     Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
     const t = c.init_tags(["text", "drafts", "zero", "store"]);
     main.dispatch_$x_(c._PCT__$o__$o_(Op, t.text, "persisted note"));
-    const controlTags = c.init_tags(["reel/recall", "reel/run"]);
-    main.dispatch_$x_(c._PCT__$o__$o_(Op, controlTags["reel/recall"], 0));
+    const controlTags = c.init_tags(["recall", "reel/run"]);
+    main.dispatch_$x_(c._PCT__$o__$o_(Control, controlTags.recall, 0));
     const initialStore = c.option_$o_unwrap(c.get(c.deref(main._$s_reel), t.store));
     const initialDrafts = c.option_$o_unwrap(c.get(initialStore, t.drafts));
     assert.equal(c.option_$o_unwrap(c.get(c.option_$o_unwrap(c.get(initialDrafts, "zero")), t.text)), "");
-    main.dispatch_$x_(c._PCT__$o__$o_(Op, controlTags["reel/run"]));
+    main.dispatch_$x_(c._$o__$o_(controlTags["reel/run"]));
     main.persist_storage_$x_();
     assert.equal(writes.length, 1);
     assert.equal(writes[0][0], "manuscript");
