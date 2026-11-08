@@ -32,16 +32,16 @@ function handlers(node, kind, found = []) {
   return found;
 }
 test("initial and edited Store Structs render without being decoded as Maps", () => {
-  assert.ok(make_string(comp_container(newReel(store))).includes("new..."));
+  assert.ok(make_string(comp_container(newReel(store), () => {})).includes("new..."));
   const edited = updater(store, op("text", "First note\nsecond line"), "next", 100);
-  const html = make_string(comp_container(newReel(edited)));
+  const html = make_string(comp_container(newReel(edited), () => {}));
   assert.ok(html.includes("First note"));
   assert.ok(html.includes("second line"));
 });
 test("actual textarea callback reads the normalized event Map and dispatches one Enum", () => {
   let db = store;
   const event = event__GT_edn({ type: "input", target: { value: "typed input", checked: false } });
-  const inputs = handlers(comp_container(newReel(db)), t.input);
+  const inputs = handlers(comp_container(newReel(db), () => {}), t.input);
   assert.equal(inputs.length, 1);
   inputs[0](event, (...args) => {
     assert.equal(args.length, 1);
@@ -68,7 +68,7 @@ test("actual mono callback toggles the current draft through a single Enum", () 
   assert.equal(clicks.length, 1);
   clicks[0](null, (...args) => { assert.equal(args.length, 1); db = updater(db, args[0], "fixture", 100); });
   assert.equal(get(draftAt(db, "zero"), t["mono?"]), true);
-  assert.ok(make_string(comp_container(newReel(db))).includes('spellcheck="false"'));
+  assert.ok(make_string(comp_container(newReel(db), () => {})).includes('spellcheck="false"'));
 });
 test("titles retain first-line and private-title behavior", () => {
   const draft = c.assoc(draftAt(store, "zero"), t.text, "Title\nbody");
@@ -92,7 +92,7 @@ test("legacy Map notes decode into a typed Store and hydrate without data loss",
   assert.equal(get(draftAt(next, "saved"), t.text), "historical note");
   assert.equal(get(draftAt(next, "saved"), t["mono?"]), true);
   assert.equal(get(next, t.version), "legacy");
-  assert.ok(make_string(comp_container(newReel(next))).includes("historical note"));
+  assert.ok(make_string(comp_container(newReel(next), () => {})).includes("historical note"));
 });
 test("new saved Store and nested Draft Structs round-trip through the external decoder", () => {
   const edited = updater(store, op("text", "round trip"), "empty", 100);
