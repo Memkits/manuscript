@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/
-      :type-slots $ {} $ :dispatch-op |app.schema/Op
+      :type-slots $ {} $ :dispatch-op 'app.schema/Op
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -61,7 +61,7 @@
                 :style $ {} $ :color
                   if mono? (hsl 0 0 40) (hsl 0 0 90)
                 :on-click $ fn (event dispatch!)
-                  hint-fn $ Fn (Map Tag Dynamic)
+                  hint-fn $ Fn respo.schema/RespoEvent
                     Fn app.schema/Op $ -> Unit
                     -> Unit
                   dispatch! $ app.schema/Op :mono
@@ -81,7 +81,7 @@
                       :top $ + 16 $ * idx 32
                     {} $ :top $ + 16 (* idx 32)
                   :on-click $ fn (event dispatch!)
-                    hint-fn $ Fn (Map Tag Dynamic)
+                    hint-fn $ Fn respo.schema/RespoEvent
                       Fn app.schema/Op $ -> Unit
                       -> Unit
                     dispatch! $ app.schema/Op :pointer draft-id
@@ -162,14 +162,27 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
-            match (typed/decode-control op)
-              (:some control)
-                reset! *reel $ typed/apply-control updater @*reel control
-              (:none)
-                reset! *reel $ typed/record-op updater @*reel (app.schema/decode-op op) (generate-id!) (host/now-ms)
+            cond
+                = (enum-definition op) (Option :some app.schema/Op)
+                dispatch-resolved! $ decode-map-as op 'app.schema/Op
+              (= (enum-definition op) (Option :some typed/Control))
+                dispatch-resolved! $ decode-map-as op 'reel.typed/Control
+              true $ match (typed/decode-control op)
+                (:some control) (dispatch-resolved! control)
+                (:none)
+                  dispatch-resolved! $ app.schema/decode-op op
             , &unit
           :examples $ []
           :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
+        'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn dispatch-resolved! (op)
+            hint-fn $ Fn app.schema/ResolvedOp (-> Unit) (:features :js-ffi)
+            reset! *reel $ match op
+              (reel.typed/Control control) (typed/apply-control updater @*reel control)
+              (app.schema/Op action)
+                typed/record-op updater @*reel action (generate-id!) (host/now-ms)
+            , &unit
+          :examples $ []
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -253,15 +266,12 @@
             :pointer String
             :hydrate-storage app.schema/Store
             :mono
-            :reel/toggle
-            :reel/recall Number
-            :reel/run
-            :reel/step
-            :reel/merge
-            :reel/reset
-            :reel/remove Number
           :examples $ []
           :schema $ quote EnumDef
+        'ResolvedOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ResolvedOp Op reel.typed/Control
+          :examples $ []
+          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ Map Dynamic Dynamic
@@ -379,9 +389,9 @@
                             empty-ids $ -> empty-drafts
                               map $ fn (draft) draft.:id
                               filter $ fn (draft-id) (not= draft-id pointer)
-                          decode-map-as
-                            dissoc changed-drafts & $ &set:to-list empty-ids
-                            Map String app.schema/Draft
+                          .fold (&set:to-list empty-ids) changed-drafts $ fn (remaining id)
+                            hint-fn $ Fn (Map String app.schema/Draft) String $ -> (Map String app.schema/Draft)
+                            .dissoc remaining id
                     assoc store :drafts next-drafts
                 (:pointer pointer-id) (assoc store :pointer pointer-id)
                 (:hydrate-storage data) data
@@ -390,7 +400,6 @@
                     (:some draft)
                       assoc store :drafts $ assoc store.:drafts pointer $ assoc draft :mono? (not draft.:mono?)
                     (:none) store
-                _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
