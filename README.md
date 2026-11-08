@@ -30,7 +30,7 @@ Canonical files are `calcit.cirru` and `deps.cirru`; retired `compact.cirru`
 and `package.cirru` are ignored and rejected by CI. Original server deployment
 paths and the `manuscript` local-storage key are preserved.
 
-CI 使用正式 COS action v1.2.0 内置 HTML 同域资源引用及公开内容校验；PR 按 PR/run/attempt 隔离，同组串行保留等待队列。
+CI 使用正式 COS action v1.3.0 内置 HTML 同域资源引用及公开内容校验；PR 按 PR/run/attempt 隔离，同组串行保留等待队列。
 工具链一致性、规范格式、全部定义、完整 strict 和六个业务 namespace 公开定义检查，以及原十一项笔记/持久化测试均保留。
 不增加测试脚本、npm 依赖、强转或质量预算，原工作流不改。
 
