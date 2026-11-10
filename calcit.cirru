@@ -270,8 +270,7 @@
           :examples $ []
           :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store
-            :states $ Map Dynamic Dynamic
+          :code $ quote $ defstruct Store (:states respo.schema/States)
             :drafts $ Map String app.schema/Draft
             :pointer String
             :version String
@@ -309,7 +308,7 @@
                       raise "|Draft key and ID differ"
                 states $ decode-map-as
                   .unwrap $ get data :states
-                  Map Dynamic Dynamic
+                  , 'respo.schema/States
                 pointer $ decode-map-as
                   .unwrap $ get data :pointer
                   , 'String
@@ -318,7 +317,7 @@
                   , 'String
               Store :states states :drafts checked-drafts :pointer pointer :version version
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.schema/Store)
+          :schema $ quote $ Fn Input (-> app.schema/Store) (:generics Input)
         'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def draft
             Draft :id | :text | :touch-id 0 :mono? false
@@ -329,8 +328,9 @@
             if (struct? raw) (&struct:to-map raw)
               decode-map-as raw $ Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn Dynamic
+          :schema $ quote $ Fn Input
             -> $ Map Tag Dynamic
+            :generics Input
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :drafts
@@ -348,7 +348,7 @@
                 pointer store.:pointer
               match op
                 (:states cursor state)
-                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (Map Dynamic Dynamic)
+                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) 'respo.schema/States
                 (:text text)
                   let
                       drafts store.:drafts
