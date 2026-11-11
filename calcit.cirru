@@ -370,7 +370,7 @@
                               map $ fn (draft) draft.:id
                               filter $ fn (draft-id) (not= draft-id pointer)
                           .fold (&set:to-list empty-ids) changed-drafts $ fn (remaining id)
-                            hint-fn $ Fn (Map String app.schema/Draft) String $ -> (Map String app.schema/Draft)
+                            hint-fn $ Fn (Map String schema/Draft) String $ -> (Map String schema/Draft)
                             .dissoc remaining id
                     assoc store :drafts next-drafts
                 (:pointer pointer-id) (assoc store :pointer pointer-id)
