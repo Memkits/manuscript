@@ -80,7 +80,7 @@
                 {} (:class-name style-title)
                   :style $ if (= pointer draft-id)
                     {}
-                      :background-color $ hsl 0 0 100 $ Option :some 0.2
+                      :background-color $ hsl 0 0 100 $ Some 0.2
                       :top $ + 16 $ * idx 32
                     {} $ :top $ + 16 (* idx 32)
                   :on-click $ fn (event dispatch!)
@@ -91,14 +91,14 @@
                     focus-text!
                 if (blank? text)
                   <> |new... $ {} $ :color
-                    hsl 0 0 100 $ Option :some 0.3
+                    hsl 0 0 100 $ Some 0.3
                   let
                       title $ .unwrap-or
                         first $ split-lines text
                         , |
                     if (blank? title)
                       <> |<private> $ {}
-                        :color $ hsl 0 0 80 $ Option :some 0.5
+                        :color $ hsl 0 0 80 $ Some 0.5
                         :font-style |italic
                       <> title $ {} $ :color |white
           :examples $ []
@@ -161,7 +161,7 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel app.schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
+          :schema $ quote $ Ref (typed/State app.schema/Op app.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
@@ -201,7 +201,7 @@
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch-resolved! control)
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             storage-set!
@@ -258,7 +258,7 @@
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (List respo.schema/CoordKey) Dynamic
+            :states (List respo.schema/CoordKey) String
             :text String
             :pointer String
             :hydrate-storage app.schema/Store
@@ -317,12 +317,12 @@
                   , 'String
               Store :states states :drafts checked-drafts :pointer pointer :version version
           :examples $ []
-          :schema $ quote $ Fn Input (-> app.schema/Store) (:generics Input)
+          :schema $ quote $ Fn Input (-> Store) (:generics Input)
         'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def draft
             Draft :id | :text | :touch-id 0 :mono? false
           :examples $ []
-          :schema $ quote app.schema/Draft
+          :schema $ quote Draft
         'saved-record->map $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn saved-record->map (raw)
             if (struct? raw) (&struct:to-map raw)
@@ -337,7 +337,7 @@
               {} $ |zero $ Draft :id |zero :text | :touch-id 0 :mono? false
               , :pointer |zero :version |
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
@@ -381,7 +381,7 @@
                       assoc store :drafts $ assoc store.:drafts pointer $ assoc draft :mono? (not draft.:mono?)
                     (:none) store
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store) (:features :js-ffi)
+          :schema $ quote $ Fn schema/Store schema/Op String Number (-> schema/Store) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
