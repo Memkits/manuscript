@@ -87,7 +87,10 @@ function legacyStore() {
   return map(t.states, map(), t.drafts, map("saved", map(t.id, "saved", t.text, "historical note", t["touch-id"], 42, t["mono?"], true)), t.pointer, "saved", t.version, "legacy");
 }
 test("legacy Map notes decode into a typed Store and hydrate without data loss", () => {
-  const restored = decode_store(c.parse_cirru_edn(c.format_cirru_edn(legacyStore())));
+  const states = map(t.editor, map(t.data, "tag"), "draft", map(t.data, "string"), 2, map(t.data, "number"));
+  const archive = c.assoc(legacyStore(), t.states, states);
+  const restored = decode_store(c.parse_cirru_edn(c.format_cirru_edn(archive)));
+  assert.ok(c._$e_(get(restored, t.states), states));
   const next = updater(store, op("hydrate-storage", restored), "fixture", 0);
   assert.equal(get(draftAt(next, "saved"), t.text), "historical note");
   assert.equal(get(draftAt(next, "saved"), t["mono?"]), true);
@@ -102,6 +105,7 @@ test("new saved Store and nested Draft Structs round-trip through the external d
 test("external decoder rejects missing fields, wrong state/key types and malformed nested notes", () => {
   assert.throws(() => decode_store(map()));
   assert.throws(() => decode_store(c.assoc(legacyStore(), t.states, "not states")));
+  assert.throws(() => decode_store(c.assoc(legacyStore(), t.states, map(true, "invalid state key"))), /decode-map-as/);
   assert.throws(() => decode_store(c.assoc(legacyStore(), t.pointer, 1)));
   const draft = get(get(legacyStore(), t.drafts), "saved");
   for (const [key, bad] of [[t.id, 1], [t.text, false], [t["touch-id"], "wrong"], [t["mono?"], "wrong"]]) {

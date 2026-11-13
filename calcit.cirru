@@ -270,7 +270,8 @@
           :examples $ []
           :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:states respo.schema/States)
+          :code $ quote $ defstruct Store
+            :states $ Map respo.schema/CoordKey Dynamic
             :drafts $ Map String app.schema/Draft
             :pointer String
             :version String
@@ -304,7 +305,7 @@
                       raise "|Draft key and ID differ"
                 states $ decode-map-as
                   .unwrap $ get data :states
-                  , 'respo.schema/States
+                  Map respo.schema/CoordKey Dynamic
                 pointer $ decode-map-as
                   .unwrap $ get data :pointer
                   , 'String
@@ -344,7 +345,7 @@
                 pointer store.:pointer
               match op
                 (:states cursor state)
-                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) 'respo.schema/States
+                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (Map respo.schema/CoordKey Dynamic)
                 (:text text)
                   let
                       drafts store.:drafts
