@@ -281,6 +281,13 @@
             {} $ :storage-key |manuscript
           :examples $ []
           :schema $ quote $ Map Tag String
+        'decode-draft $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-draft (raw)
+            decode-map-as
+              select-keys (saved-record->map raw) ([] :id :text :touch-id :mono?)
+              , Draft
+          :examples $ []
+          :schema $ quote $ Fn Input (-> Draft) (:generics Input)
         'decode-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-store (raw)
             let
@@ -290,21 +297,10 @@
                   Map String Dynamic
                 checked-drafts $ filter-map-kv drafts $ fn (key value)
                   let
-                      row $ saved-record->map value
-                      id $ decode-map-as
-                        .unwrap $ get row :id
-                        , 'String
-                      text $ decode-map-as
-                        .unwrap $ get row :text
-                        , 'String
-                      touch-id $ decode-map-as
-                        .unwrap $ get row :touch-id
-                        , 'Number
-                      mono? $ decode-map-as
-                        .unwrap $ get row :mono?
-                        , 'Bool
-                    if (= key id)
-                      MapEntryDecision :keep key $ Draft :id id :text text :touch-id touch-id :mono? mono?
+                      draft $ decode-draft value
+                    if
+                      = key $ :id draft
+                      MapEntryDecision :keep key draft
                       raise "|Draft key and ID differ"
                 states $ decode-map-as
                   .unwrap $ get data :states
