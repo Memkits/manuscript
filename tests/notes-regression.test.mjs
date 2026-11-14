@@ -99,6 +99,9 @@ test("legacy Map notes decode into a typed Store and hydrate without data loss",
 });
 test("new saved Store and nested Draft Structs round-trip through the external decoder", () => {
   const edited = updater(store, op("text", "round trip"), "empty", 100);
+  const decoded = decode_store(edited);
+  const activeId = get(edited, t.pointer);
+  assert.strictEqual(draftAt(decoded, activeId), draftAt(edited, activeId));
   const restored = decode_store(c.parse_cirru_edn(c.format_cirru_edn(edited)));
   assert.ok(c._$e_(restored, edited));
 });
