@@ -284,9 +284,12 @@
           :schema $ quote $ Map Tag String
         'decode-draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-draft (raw)
-            decode-map-as
-              select-keys (saved-record->map raw) ([] :id :text :touch-id :mono?)
-              , Draft
+            if
+              and (struct? raw) (&struct:matches? raw Draft)
+              assert-type raw Draft
+              decode-map-as
+                select-keys (saved-record->map raw) ([] :id :text :touch-id :mono?)
+                , Draft
           :examples $ []
           :schema $ quote $ Fn Input (-> Draft) (:generics Input)
         'decode-store $ %{} 'CodeEntry (:doc |)
