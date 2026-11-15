@@ -269,9 +269,12 @@
           :code $ quote $ defunion ResolvedOp Op reel.typed/Control
           :examples $ []
           :schema $ quote UnionDef
+        'StateValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion StateValue String (Map respo.schema/CoordKey StateValue)
+          :examples $ []
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ Map respo.schema/CoordKey Dynamic
+            :states $ Map respo.schema/CoordKey app.schema/StateValue
             :drafts $ Map String app.schema/Draft
             :pointer String
             :version String
@@ -308,7 +311,7 @@
                       raise "|Draft key and ID differ"
                 states $ decode-map-as
                   .unwrap $ get data :states
-                  Map respo.schema/CoordKey Dynamic
+                  Map respo.schema/CoordKey app.schema/StateValue
                 pointer $ decode-map-as
                   .unwrap $ get data :pointer
                   , 'String
@@ -318,6 +321,23 @@
               Store :states states :drafts checked-drafts :pointer pointer :version version
           :examples $ []
           :schema $ quote $ Fn Input (-> Store) (:generics Input)
+          :tests $ [] $ %{} 'TestEntry (:name |state-values)
+            :code $ quote $ let
+                raw $ &{} :states
+                  {} $ :draft |hello
+                  , :drafts ({}) :pointer |p :version |v
+                store $ app.schema/decode-store raw
+                states $ :states store
+                nested $ app.schema/decode-store $ assoc raw :states
+                  {} $ :editor $ {} (:data |nested)
+              assert= (Some |hello) (get states :draft)
+              assert= |v $ :version nested
+              assert |reject-non-string-state $ try
+                do
+                  app.schema/decode-store $ assoc raw :states $ {} (:draft 1)
+                  , false
+                fn (error) true
+            :tags $ #{} :unit
         'draft $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def draft
             Draft :id | :text | :touch-id 0 :mono? false
@@ -348,7 +368,7 @@
                 pointer store.:pointer
               match op
                 (:states cursor state)
-                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (Map respo.schema/CoordKey Dynamic)
+                  assoc store :states $ decode-map-as (update-state-tree store.:states cursor state) (Map respo.schema/CoordKey app.schema/StateValue)
                 (:text text)
                   let
                       drafts store.:drafts
