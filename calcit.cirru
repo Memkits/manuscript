@@ -53,9 +53,9 @@
                 comp-typed-reel (>> states :reel) reel ({}) on-control!
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
-            Fn reel.typed/Control $ -> Unit
+            Fn reel.typed/Control (-> Unit) (:features :state)
             -> respo.schema/Component
-            :features :js-ffi
+            :features :js-ffi :state
         'comp-mono $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-mono (mono?)
             span
@@ -232,9 +232,9 @@
             set-interval! callback $ * 1000 duration
           :examples $ []
           :schema $ quote $ Fn Number
-            Fn $ -> Unit
+            Fn (-> Unit) (:features :state)
             -> Number
-            :features :js-ffi
+            :features :js-ffi :state
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
