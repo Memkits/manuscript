@@ -272,6 +272,7 @@
         'StateValue $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defunion StateValue String (Map respo.schema/CoordKey StateValue)
           :examples $ []
+          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ Map respo.schema/CoordKey app.schema/StateValue
