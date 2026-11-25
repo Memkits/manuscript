@@ -8,8 +8,8 @@ Demo: http://repo.memkits.org/manuscript/
 
 ### 使用者需要注意
 
-开发工具链要求正式 Calcit CLI / `@calcit/procs` **0.44.0**，请重新安装完整模块图、生成 JS 并刷新。
-正式模块为 Reel 0.11.5、UI 0.15.7、Respo 0.19.13、JS FFI 0.2.19 和 Router 0.12.11。
+开发工具链要求正式 Calcit CLI / `@calcit/procs` **0.45.1**，请重新安装完整模块图、生成 JS 并刷新。
+正式模块为 Reel 0.11.9、UI 0.16.5、Respo 0.19.18、JS FFI 0.2.24 和 Router 0.12.17。
 Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔离期为一小时。
 
 便笺排序、唯一空草稿、私密标题、Mono、旧 Map/嵌套 Draft 存档及 `manuscript` 存储 key 保持。
@@ -22,7 +22,7 @@ Vite 8.3.3 和其他 npm 依赖保持原值，lock 配对新 runtime，安装隔
 
 https://github.com/calcit-lang/respo-calcit-workflow
 
-Use paired formal Calcit/procs 0.44.0, `caps --ci --strict`, and
+Use paired formal Calcit/procs 0.45.1, `caps --ci --strict`, and
 `yarn install --immutable`. Build with `yarn build`, then run
 `node --test tests/*.test.mjs`. Public upload verification uses cos-upload-action's
 built-in verify settings, with no extra CDN checker.
